@@ -39,7 +39,7 @@ public class LarkParser extends Parser {
             args.add(operator());
         }
 
-        return new Expr(join(keywords), args);
+        return new Expr(new Atom(join(keywords)), args);
     }
     
     private Expr operator() {
@@ -53,61 +53,77 @@ public class LarkParser extends Parser {
             args.add(expr);
             args.add(right);
             
-            expr = new Expr(op, args);
+            expr = new Expr(new Atom(op), args);
         }
 
         return expr;
     }
     
     private Expr call() {
-        List<Expr> primary = primary();
+        List<Expr> primary = primary(true);
         
         if (primary == null) {
             //### bob: temp hack. should throw exception or something
-            return new Expr("HACK COULDN'T PARSE PRIMARY");
+            return new Expr(new Atom("HACK COULDN'T PARSE PRIMARY"));
         }
         
         return flatten(primary);
     }
-    
-    private List<Expr> primary() {
+
+    private List<Expr> primary(boolean recurse) {
         List<Expr> exprs = new ArrayList<Expr>();
 
-        if (match(TokenType.NAME))
-        {
+        if (match(TokenType.NAME)) {
             String name = getMatch()[0].getString();
-
-            List<Expr> args = primary();
-
-            if (args == null) args = new ArrayList<Expr>(); // a -> a ()
-
-            exprs.add(new Expr(name, args));
-        }
-        else if (match(TokenType.NUMBER))
-        {
-            exprs.add(new Expr(getMatch()[0].getInt()));
-        }
-        else if (match(TokenType.LEFT_PAREN, TokenType.RIGHT_PAREN))
-        {
-            // do nothing, leave empty list
-        }
-        else if (match(TokenType.LEFT_PAREN))
-        {
+            Atom atom = new Atom(name);
+            
+            if (recurse) {
+                List<Expr> args = primary(recurse);
+                if (args == null) args = new ArrayList<Expr>(); // a -> a ()
+                exprs.add(new Expr(atom, args));
+            } else {
+                exprs.add(new Expr(atom));
+            }
+        } else if (match(TokenType.NUMBER)) {
+            exprs.add(new Expr(new Atom(getMatch()[0].getInt())));
+        } else if (match(TokenType.LEFT_PAREN, TokenType.RIGHT_PAREN)) {
+            // the unit expr
+            exprs.add(Expr.unit());
+        } else if (match(TokenType.LEFT_PAREN)) {
             exprs.addAll(sequence());
             if (!match(TokenType.RIGHT_PAREN)) {
-                //### bob: hack. should throw
-                //throw new Exception("Missing closing ')'.");
+                // ### bob: hack. should throw
+                // throw new Exception("Missing closing ')'.");
             }
-        }
-        else
-        {
+        } else if (match(TokenType.LEFT_BRACKET)) {
+            exprs.add(bracketList());
+            if (!match(TokenType.RIGHT_BRACKET)) {
+                // ### bob: hack. should throw
+                // throw new Exception("Missing closing ')'.");
+            }
+        } else {
             // bad parse
             return null;
         }
 
         return exprs;        
     }
-
+    
+    private Expr bracketList() {
+        List<Expr> exprs = new ArrayList<Expr>();
+        
+        // parse sequential primary expressions and build a single list
+        while (!isMatch(TokenType.RIGHT_BRACKET)) {
+            exprs.add(flatten(primary(false)));
+        }
+        
+        // now build an expr from the results
+        // note that we aren't calling flatten() here because we *don't* want
+        // to turn a single element list into just that element, we always want
+        // to wrap it in a new Expr.
+        return new Expr(exprs);
+    }
+    
     private String join(Collection<?> s) {
         StringBuilder builder = new StringBuilder();
         Iterator<?> iter = s.iterator();

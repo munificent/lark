@@ -4,46 +4,48 @@ import java.util.*;
 
 public class Expr {
 
+    public static Expr unit() {
+        return new Expr(new Atom());
+    }
+
     public Expr(final Collection<Expr> exprs) {
-        mType = AtomType.None;
-        mName = "";
-        mInt  = 0;
+        mAtom = new Atom();
         mExprs = new ArrayList<Expr>(exprs);
     }
 
-    public Expr(final String name) {
-        mType = AtomType.Name;
-        mName = name;
-        mInt  = 0;
-        mExprs = new ArrayList<Expr>();
-    }
-
-    public Expr(final int value) {
-        mType = AtomType.Int;
-        mName = "";
-        mInt  = value;
+    public Expr(final Atom atom) {
+        mAtom = atom;
         mExprs = new ArrayList<Expr>();
     }
     
-    public Expr(final String name, final Collection<Expr> exprs) {
-        mType = AtomType.Name;
-        mName = name;
-        mInt  = 0;
+    public Expr(final Atom atom, final Collection<Expr> exprs) {
+        mAtom = atom;
         mExprs = new ArrayList<Expr>(exprs);
+    }
+
+    public boolean isLiteral() {
+        return ((mAtom.getType() == AtomType.UNIT) && (mExprs.size() == 0)) ||
+               (mAtom.getType() == AtomType.INT);
+    }
+    
+    public String getName() {
+        return mAtom.getName();
+    }
+    
+    public int size() {
+        return mExprs.size();
+    }
+    
+    public Expr get(int index) {
+        return mExprs.get(index);
     }
     
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
         
-        // special case the unit expr
-        if ((mType == AtomType.None) && (mExprs.size() == 0)) return "()";
-        
         // add the atom
-        switch (mType) {
-        case Name: builder.append(mName); break;
-        case Int:  builder.append(mInt); break;
-        }
+        builder.append(mAtom.toString());
         
         // add the child expressions, if any
         if (mExprs.size() > 0) {
@@ -60,12 +62,6 @@ public class Expr {
         return builder.toString();
     }
     
-    private enum AtomType {
-        None, Name, Int
-    }
-    
-    private final AtomType mType;
-    private final String mName;
-    private final int    mInt;
+    private final Atom mAtom;
     private final ArrayList<Expr> mExprs;
 }

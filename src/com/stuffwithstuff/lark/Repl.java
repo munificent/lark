@@ -15,6 +15,8 @@ public class Repl {
         InputStreamReader converter = new InputStreamReader(System.in);
         BufferedReader in = new BufferedReader(converter);
 
+        Interpreter interpreter = new Interpreter();
+        
         while (true) {
             System.out.print("> ");
             String line = in.readLine();
@@ -24,7 +26,15 @@ public class Repl {
             LarkParser parser = new LarkParser(lexer);
             
             Expr expr = parser.parse();
-            System.out.println("= " + expr.toString());
+            if (expr != null) {
+                System.out.println(": " + expr.toString());
+                
+                Expr result = interpreter.eval(expr);
+                System.out.println("= " + result.toString());
+                                
+            } else {
+                System.out.println("! parse error");
+            }
         }
     }
 
