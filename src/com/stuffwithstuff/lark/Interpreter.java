@@ -61,7 +61,7 @@ public class Interpreter {
         String name = expr.get(0).getName();
         
         // define the name in the current scope
-        scope.put(name, expr.get(1));
+        scope.put(name, eval(scope, expr.get(1)));
         
         return Expr.unit();
     }
@@ -71,7 +71,7 @@ public class Interpreter {
         
         // create a new lexical scope with the name bound in it
         Environment childScope = scope.create();
-        childScope.put(name, expr.get(1));
+        childScope.put(name, eval(scope, expr.get(1)));
         
         // evaluate the body of the let
         return eval(childScope, expr.get(2));

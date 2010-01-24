@@ -1,7 +1,173 @@
 
     Lark
+    ----
 
-Lark is an experiment in designing a language syntax that's as rich
-as SmallTalk, but as programmable as Scheme.
+Lark is an experiment in designing a homoiconic language with a syntax
+inspired by SmallTalk. It's very early, so there isn't much to see
+yet, but you can play with it.
 
-It's very early. Not much to see here yet...
+Lark Syntax
+===========
+
+In much the same way that the fundamental structure in Lisp/Scheme is
+a list, the fundamental structure in Lark is a *labelled tree*. Code
+and data in Lark is represented as a simple tree. Each node in the
+tree has a label which can be a name, int, or nothing. Then it can
+have zero or more child nodes.
+
+For example, a tree representing a simple arithmatic expression "1 +2"
+would look like:
+
+        ,---,
+        | + |
+        `---'
+        /   \
+    ,---,   ,---,
+    | 1 |   | 2 |
+    `---'   `---'
+
+The Lark parser is responsible for taking a string of text and turning
+it into a tree.
+
+Prefix functions
+----------------
+The basic Lark syntax looks much like C. Any series of characters
+that starts with a letter (and isn't a keyword, explained below) is
+considered a function name. The following:
+
+    sum (a, abs (b))
+
+will be parsed as:
+
+        ,-----,
+        | sum |
+        `-----'
+        /     \
+    ,---,    ,-----,
+    | a |    | abs |
+    `---'    `-----'
+                |
+              ,---,
+              | b |
+              `---'
+
+If a function call only takes a single argument, the parentheses can
+be omitted. Unlike Lisp, parentheses in Lark are only for grouping.
+The above can also be written:
+
+    sum (a, abs b)
+
+Operators
+---------
+Operators are parsed like SmallTalk. Any sequence of punctuation
+characters is considered an operator and it will be parsed in infix
+position. All operators have the same precedence (no Dear Aunt Sally),
+and are parsed from left to right. The expression:
+
+    a + b * c @#%! d
+    
+is equivalent to:
+
+    @#%!(*(+(a, b), c), d)
+
+Keywords
+--------
+Lark has keywords that work similar to SmallTalk. A keyword starts
+with a letter, has any number of other characters, and ends with a
+colon (":"). The parser will translate a series of keywords separated
+by arguments into a single keyword node. This:
+
+    if: a then: b else: c
+
+is parsed as:
+
+    if:then:else:(a, b, c)
+
+Brackets
+--------
+Square brackets can be used to create a simple unlabelled tree of it
+contents, separated by spaces. They're useful for things like lists
+of names or creating an explicitly empty list. This:
+
+    [a b (c < d) []]
+
+is parsed as:
+
+    (a, b, <(c, d), ())
+
+Precedence
+----------
+The precedence rules follow SmallTalk. From highest to lowest, it is
+prefix functions, operators, keywords, then ",". So, the following:
+
+    if: a < b then: c, d
+
+is parsed as:
+
+    (if:then:(<(a, b), c), d)
+
+Note that the comma implicitly creates an unlabelled tree.
+
+That's the basic syntax. The Lark parser reads that and immediately
+translates it to the much simpler tree form.
+
+Running Lark
+============
+
+Lark is a Java application stored in a single jar, you can run it by
+doing either:
+
+  $ java -jar lark.jar
+
+Or, if you have bash installed, just:
+
+  $ ./lark
+
+This starts up the Lark REPL, like this:
+
+  lark v0.0.0
+  -----------
+  Type 'q' and press Enter to quit.
+  > 
+
+From there you can enter expressions, which the interpreter will
+evaluate and print the result.
+
+Built-in functions
+==================
+
+So what can you actually do with it? Not much, yet. Only a few
+built-in functions are implemented:
+
+fn: <params> body: <expr>
+
+    Creates a new function (a lambda in Scheme parlance). Args is a
+    list of parameter names and <expr> is the body of the function.
+    
+    Right now, a function can only be called by binding it to a name
+    and then calling that name. Like so:
+    
+        def: identity is: (fn: [a] body: a)
+        identity 123
+    
+    will return 123.
+    
+    Eventually, I'll add support for calling anonymous functions.
+
+def: <name> is: <expr>
+    
+    This defines a new variable binding in the current scope. It
+    evaluates <expr> and binds the result to the name <name>. Ex:
+    
+        def: a is: 123
+    
+    will assign "123" to the name "a".
+
+def: <name> is: <expr> in: <body>
+
+    Unlike the previous one, this defines a new variable binding in a
+    new scope. It creates a new scope, evaluates <expr> and binds the
+    result to the name <name>. Then it evaluates <body> using the new
+    scope. Afterwards, the scope is discarded.
+
+Like I said, very early...
