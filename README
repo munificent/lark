@@ -74,8 +74,9 @@ Keywords
 --------
 Lark has keywords that work similar to SmallTalk. A keyword starts
 with a letter, has any number of other characters, and ends with a
-colon (":"). The parser will translate a series of keywords separated
-by arguments into a single keyword node. This:
+colon (":"). (A single ":" by itself is also a valid keyword.) The
+parser will translate a series of keywords separated by arguments into
+a single keyword node. This:
 
     if: a then: b else: c
 
