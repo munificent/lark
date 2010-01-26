@@ -41,6 +41,29 @@ The above can also be written:
 
     sum (a, abs b)
 
+Dotted functions
+----------------
+Lark also allows functions to be called using the dot operator. It's
+functionally equivalent to a regular function call, but has two minor
+differences: the function and argument are swapped, and the precedence
+is higher. For example:
+
+    a.b c.d
+
+is desugared to:
+
+    (b(a))(d(c))
+
+Swapping the argument and function may sound a bit arbitrary, but it
+allows you to write in an "object.method" style familiar to many OOP
+programmers. For example, instead of:
+
+    length list
+
+you can use:
+
+    list.length
+
 Operators
 ---------
 Operators are parsed like SmallTalk. Any sequence of characters
@@ -173,5 +196,53 @@ def: <name> is: <expr>
     : ()
     > a
     : 123
+
+if: <condition> then: <expr>
+if: <condition> then: <expr> else: <else>
+
+    Evaluates the condition. If it evaluates to true, then it
+    evaluates and returns <expr>. If it evaluates to false, it will
+    either return () or, if an else: clause is given, evaluate and
+    return that. Ex:
+    
+    > if: true then: print 1 else: print 2
+    2
+    : ()
+
+bool? <expr>
+int? <expr>
+list? <expr>
+name? <expr>
+unit? <expr>
+
+    Evaluates <expr> then returns true if it is the given type. Note
+    that ().list? returns *true* because unit is the empty list. Ex:
+    
+    > 123.int?
+    : true
+    > ('foo).name?
+    : true
+    > 123.list?
+    : false
+
+<int> <expr>
+
+    Evaluates <expr>, expecting it to be a list. Returns the item
+    at the <int> position in the list (zero-based). Basically, this
+    means an int is a function you can pass a list to to get an item
+    from it. Ex:
+    
+    > 0 (1, 2, 3)
+    : 1
+    > (4, 5, 6, 7).3
+    : 7
+    
+count <expr>
+
+    Evaluates <expr>, expecting it to be a list. Returns the number of
+    items in the list. Ex:
+    
+    > (1, 2, 3).count
+    : 3
 
 That's it so far. Like I said, very early...

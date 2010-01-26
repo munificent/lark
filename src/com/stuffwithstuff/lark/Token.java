@@ -35,6 +35,7 @@ public final class Token {
             case LEFT_BRACE: return "{";
             case RIGHT_BRACE: return "}";
             case COMMA: return ",";
+            case DOT: return ".";
 
             case NAME: return "[name] " + mStringValue;
             case OPERATOR: return "[op] " + mStringValue;

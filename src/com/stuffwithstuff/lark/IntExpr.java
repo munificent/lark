@@ -1,7 +1,6 @@
 package com.stuffwithstuff.lark;
 
 public class IntExpr extends Expr {
-
     public IntExpr(final int value) {
         mValue = value;
     }
