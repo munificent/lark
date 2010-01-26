@@ -24,14 +24,11 @@ public class Repl {
             
             Lexer lexer = new Lexer(line);
             LarkParser parser = new LarkParser(lexer);
-            
             Expr expr = parser.parse();
+            
             if (expr != null) {
-                System.out.println(": " + expr.toString());
-                
                 Expr result = interpreter.eval(expr);
                 System.out.println("= " + result.toString());
-                                
             } else {
                 System.out.println("! parse error");
             }

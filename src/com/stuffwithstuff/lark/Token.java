@@ -1,5 +1,6 @@
 package com.stuffwithstuff.lark;
 
+
 public final class Token {
     public Token(final TokenType type) {
         mType = type;

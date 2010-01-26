@@ -9,25 +9,23 @@ yet, but you can play with it.
 Lark Syntax
 ===========
 
-In much the same way that the fundamental structure in Lisp/Scheme is
-a list, the fundamental structure in Lark is a *labelled tree*. Code
-and data in Lark is represented as a simple tree. Each node in the
-tree has a label which can be a name, int, or nothing. Then it can
-have zero or more child nodes.
+Core syntax
+-----------
+Internally, Lark has a very simple syntax. It's more complex than
+Scheme, but just barely. It has three core expression types:
 
-For example, a tree representing a simple arithmatic expression "1 +2"
-would look like:
+- Atoms are things like names, numbers and other literals.
+- Lists are an ordered set of other expressions.
+- Calls are a pair of expressions, the function and the argument.
 
-        ,---,
-        | + |
-        `---'
-        /   \
-    ,---,   ,---,
-    | 1 |   | 2 |
-    `---'   `---'
+That's it. Scheme has the first two, and Lark just adds one more.
+Every expression in Lark can be desugared to these core elements. The
+rest of this section explains the syntactic sugar added on top of
+that, but that's handled only by the parser. To the interpreter, the
+above is the only syntax.
 
-The Lark parser is responsible for taking a string of text and turning
-it into a tree.
+This *should* mean that it'll be as easy to make powerful macros in
+Lark as it is in Scheme.
 
 Prefix functions
 ----------------
@@ -59,10 +57,11 @@ The above can also be written:
 
 Operators
 ---------
-Operators are parsed like SmallTalk. Any sequence of punctuation
-characters is considered an operator and it will be parsed in infix
-position. All operators have the same precedence (no Dear Aunt Sally),
-and are parsed from left to right. The expression:
+Operators are parsed like SmallTalk. Any sequence of characters
+starting with a punctuation one is considered an operator and will
+be parsed in infix position. All operators have the same precedence
+(no Dear Aunt Sally), and are parsed from left to right. The
+expression:
 
     a + b * c @#%! d
     
@@ -84,17 +83,19 @@ is parsed as:
 
     if:then:else:(a, b, c)
 
-Brackets
---------
-Square brackets can be used to create a simple unlabelled tree of it
-contents, separated by spaces. They're useful for things like lists
-of names or creating an explicitly empty list. This:
+Lists
+-----
+A list can be created by separating expressions with commas, like so:
 
-    [a b (c < d) []]
+    1, 2, 3
 
-is parsed as:
+Parentheses are not necessary, but are often useful since commas have
+low precedence. For example:
 
-    (a, b, <(c, d), ())
+    this:              means:
+
+    difference 1, 2     ===>  (difference(1), 2)
+    difference (1, 2)   ===>  difference(1, 2)
 
 Precedence
 ----------
@@ -107,10 +108,8 @@ is parsed as:
 
     (if:then:(<(a, b), c), d)
 
-Note that the comma implicitly creates an unlabelled tree.
-
 That's the basic syntax. The Lark parser reads that and immediately
-translates it to the much simpler tree form.
+translates it to the much simpler core syntax.
 
 Running Lark
 ============
@@ -140,35 +139,53 @@ Built-in functions
 So what can you actually do with it? Not much, yet. Only a few
 built-in functions are implemented:
 
-fn: <params> body: <expr>
+' <expr>
 
-    Creates a new function (a lambda in Scheme parlance). Args is a
-    list of parameter names and <expr> is the body of the function.
+    The quote function simply returns its argument in unevaluated
+    form. Ex:
     
-    Right now, a function can only be called by binding it to a name
-    and then calling that name. Like so:
+    > ` print 123
+    : print 123
+    (note: does not call print function)
+
+do <expr>
+
+    If the expression is anything but a list, it simply evaluates it
+    and returns. If it's a list, it evaluates each item in the list,
+    in order, and then returns the evaluated value of the last item.
     
-        def: identity is: (fn: [a] body: a)
-        identity 123
+    In other words, it's Lark's version of a { } block in C. Ex:
     
-    will return 123.
+    > do (print 1, print 2, print 3)
+    1
+    2
+    3
+    : ()
+
+print <expr>
+
+    Simply evaluates the argument and prints it to the console.
+
+<params> => <body>
+
+    Creates an anonymous function (a lambda). <params> should either
+    be a single name or a list of parameter names. <body> is an
+    expression that forms the body of the function. Ex:
     
-    Eventually, I'll add support for calling anonymous functions.
+    > (a => do (print a, print a)) 123
+    123
+    123
+    : ()
 
 def: <name> is: <expr>
-    
-    This defines a new variable binding in the current scope. It
-    evaluates <expr> and binds the result to the name <name>. Ex:
-    
-        def: a is: 123
-    
-    will assign "123" to the name "a".
 
-def: <name> is: <expr> in: <body>
+    Binds a value to a variable in the current scope. <name> should
+    be a single name. <expr> will be evaluated and the result bound
+    to the name. Ex:
+    
+    > def: a is: 123
+    : ()
+    > a
+    : 123
 
-    Unlike the previous one, this defines a new variable binding in a
-    new scope. It creates a new scope, evaluates <expr> and binds the
-    result to the name <name>. Then it evaluates <body> using the new
-    scope. Afterwards, the scope is discarded.
-
-Like I said, very early...
+That's it so far. Like I said, very early...

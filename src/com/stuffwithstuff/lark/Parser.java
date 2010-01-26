@@ -2,6 +2,7 @@ package com.stuffwithstuff.lark;
 
 import java.util.*;
 
+
 public abstract class Parser {
     public Parser(Lexer lexer) {
         mLexer = lexer;
@@ -19,7 +20,7 @@ public abstract class Parser {
             if (!lookAhead(i).getType().equals(types[i])) return false;
         }
 
-        return true;        
+        return true;
     }
     
     protected boolean match(TokenType... types) {

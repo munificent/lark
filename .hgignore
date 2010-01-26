@@ -8,8 +8,3 @@ bin/**.*
 
 # ignore revert backups
 **.orig
-
-# ignore eclipse (?) stuff
-.classpath
-.project
-.settings/org.eclipse.jdt.core.prefs

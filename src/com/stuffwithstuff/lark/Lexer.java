@@ -1,5 +1,6 @@
 package com.stuffwithstuff.lark;
 
+
 public class Lexer {
 
     public Lexer(String text) {
@@ -11,65 +12,42 @@ public class Lexer {
 
     public Token readToken() {
         while (mIndex <= mText.length()) {
+            
+            // tack on a '\0' to the end of the string an lex it. that will let
+            // us conveniently have a place to end any token that goes to the
+            // end of the string
             char c = (mIndex < mText.length()) ? mText.charAt(mIndex) : '\0';
 
             switch (mState) {
             case DEFAULT:
                 switch (c) {
-                case '(':
-                    mIndex++;
-                    return new Token(TokenType.LEFT_PAREN);
+                case '(': return singleCharToken(TokenType.LEFT_PAREN);
+                case ')': return singleCharToken(TokenType.RIGHT_PAREN);
+                case '[': return singleCharToken(TokenType.LEFT_BRACKET);
+                case ']': return singleCharToken(TokenType.RIGHT_BRACKET);
+                case '{': return singleCharToken(TokenType.LEFT_BRACE);
+                case '}': return singleCharToken(TokenType.RIGHT_BRACE);
+                case ',': return singleCharToken(TokenType.COMMA);
+                case ':': return singleCharToken(TokenType.KEYWORD);
 
-                case ')':
-                    mIndex++;
-                    return new Token(TokenType.RIGHT_PAREN);
-
-                case '[':
-                    mIndex++;
-                    return new Token(TokenType.LEFT_BRACKET);
-
-                case ']':
-                    mIndex++;
-                    return new Token(TokenType.RIGHT_BRACKET);
-
-                case '{':
-                    mIndex++;
-                    return new Token(TokenType.LEFT_BRACE);
-
-                case '}':
-                    mIndex++;
-                    return new Token(TokenType.RIGHT_BRACE);
-
-                case ',':
-                    mIndex++;
-                    return new Token(TokenType.COMMA);
-
-                case ':':
-                    mIndex++;
-                    return new Token(TokenType.KEYWORD, ":");
-
+                // ignore whitespace
                 case ' ':
                 case '\n':
                 case '\r':
+                case '\t':
                 case '\0':
                     mIndex++;
                     break;
 
                 default:
                     if (isAlpha(c)) {
-                        mTokenStart = mIndex;
-                        mState = LexState.IN_NAME;
-                        mIndex++;
+                        startToken(LexState.IN_NAME);
                     } else if (isOperator(c)) {
-                        mTokenStart = mIndex;
-                        mState = LexState.IN_OPERATOR;
-                        mIndex++;
+                        startToken(LexState.IN_OPERATOR);
                     } else if (isDigit(c)) {
-                        mTokenStart = mIndex;
-                        mState = LexState.IN_NUMBER;
-                        mIndex++;
+                        startToken(LexState.IN_NUMBER);
                     } else {
-                        //### bob: hack temp
+                        //### bob: hack temp. unexpected character
                         return new Token(TokenType.EOF);
                     }
                     break;
@@ -107,7 +85,18 @@ public class Lexer {
         
         return new Token(TokenType.EOF);
     }
+    
+    private Token singleCharToken(TokenType type) {
+        mIndex++;
+        return new Token(type, mText.substring(mIndex - 1, mIndex));
+    }
 
+    private void startToken(LexState state) {
+        mTokenStart = mIndex;
+        mState = state;
+        mIndex++;        
+    }
+    
     private Token createStringToken(TokenType type) {
         String text = mText.substring(mTokenStart, mIndex);
         mState = LexState.DEFAULT;
@@ -124,7 +113,7 @@ public class Lexer {
     private boolean isAlpha(final char c) {
         return ((c >= 'a') && (c <= 'z')) || 
                ((c >= 'A') && (c <= 'Z')) ||
-               (c == '_');
+               (c == '_') || (c == '\'');
     }
 
     private boolean isDigit(final char c) {

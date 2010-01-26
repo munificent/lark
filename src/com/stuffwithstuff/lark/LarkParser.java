@@ -4,20 +4,33 @@ import java.util.*;
 
 public class LarkParser extends Parser {
     
+    //### bob: other stuff to support
+    // keywords that follow first arg?
+    //   a b: c
+    // [] for s-expr-style lists
+    // ; for list with lower precendence than keyword and then make , higher?
+    // {} for list where items are separated by newlines?
+    // (+) for creating name from operator
+    // (foo:) for creating name from keyword
+    // strings
+    // negative numbers and decimals
+    
+    
+    //### bob: fix:
+    // > (a, b) c
+    // : ((,) (a, b, c))
+    // doesn't look right. should be:
+    // : (a, b) c
+    
     public LarkParser(Lexer lexer) {
         super(lexer);
     }
     
     public Expr parse() {
-        List<Expr> exprs = sequence();
-        
-        // should be at end of file when parse completes
-        if (!match(TokenType.EOF)) return null;
-        
-        return flatten(exprs);
+        return list();
     }
     
-    private List<Expr> sequence() {
+    private Expr list() {
         List<Expr> exprs = new ArrayList<Expr>();
         exprs.add(keyword());
         
@@ -25,7 +38,7 @@ public class LarkParser extends Parser {
             exprs.add(keyword());
         }
         
-        return exprs;
+        return new ListExpr(exprs);
     }
     
     private Expr keyword() {
@@ -39,56 +52,120 @@ public class LarkParser extends Parser {
             args.add(operator());
         }
 
-        return new Expr(new Atom(join(keywords)), args);
+        return new CallExpr(new NameExpr(join(keywords)), new ListExpr(args));
     }
-    
+
     private Expr operator() {
-        Expr expr = call();
+        Expr syntax = call();
 
         while (match(TokenType.OPERATOR)) {
             String op = getMatch()[0].getString();
             Expr right = call();
 
             List<Expr> args = new ArrayList<Expr>();
-            args.add(expr);
+            args.add(syntax);
             args.add(right);
             
-            expr = new Expr(new Atom(op), args);
+            syntax = new CallExpr(new NameExpr(op), new ListExpr(args));
         }
 
-        return expr;
+        return syntax;        
     }
     
     private Expr call() {
-        List<Expr> primary = primary(true);
+        Expr left = primaryOrNull();
+        
+        //### bob: need error-handling
+        if (left == null) return new NameExpr("parse error, expected primary");
+        
+        while (true) {
+            Expr right = primaryOrNull();
+            if (right == null) break;
+            
+            left = new CallExpr(left, right);
+        }
+        
+        return left;
+    }
+    
+    private Expr primaryOrNull() {
+        if (match(TokenType.NAME)) {
+            return new NameExpr(getMatch()[0].getString());
+            
+        } else if (match(TokenType.NUMBER)) {
+            return new IntExpr(getMatch()[0].getInt());
+            
+        } else if (match(TokenType.LEFT_PAREN)) {
+            // () is unit
+            if (match(TokenType.RIGHT_PAREN)) {
+                return Expr.unit();
+            }
+            
+            Expr expr = list();
+            
+            if (!match(TokenType.RIGHT_PAREN)) {
+                // no closing )
+                //### bob: need error-handling!
+                return new NameExpr("missing closing )!");
+            }
+            
+            return expr;
+        }
+        
+        return null;
+    }
+    
+    /*
+    public Expr_Old parse() {
+        List<Expr_Old> exprs = sequence();
+        
+        // should be at end of file when parse completes
+        if (!match(TokenType.EOF)) return null;
+        
+        return flatten(exprs);
+    }
+    
+    private List<Expr_Old> sequence() {
+        List<Expr_Old> exprs = new ArrayList<Expr_Old>();
+        exprs.add(keyword());
+        
+        while (match(TokenType.COMMA)) {
+            exprs.add(keyword());
+        }
+        
+        return exprs;
+    }
+    
+    private Expr_Old call() {
+        List<Expr_Old> primary = primary(true);
         
         if (primary == null) {
             //### bob: temp hack. should throw exception or something
-            return new Expr(new Atom("HACK COULDN'T PARSE PRIMARY"));
+            return new Expr_Old(new Atom("HACK COULDN'T PARSE PRIMARY"));
         }
         
         return flatten(primary);
     }
 
-    private List<Expr> primary(boolean recurse) {
-        List<Expr> exprs = new ArrayList<Expr>();
+    private List<Expr_Old> primary(boolean recurse) {
+        List<Expr_Old> exprs = new ArrayList<Expr_Old>();
 
         if (match(TokenType.NAME)) {
             String name = getMatch()[0].getString();
             Atom atom = new Atom(name);
             
             if (recurse) {
-                List<Expr> args = primary(recurse);
-                if (args == null) args = new ArrayList<Expr>(); // a -> a ()
-                exprs.add(new Expr(atom, args));
+                List<Expr_Old> args = primary(recurse);
+                if (args == null) args = new ArrayList<Expr_Old>(); // a -> a ()
+                exprs.add(new Expr_Old(atom, args));
             } else {
-                exprs.add(new Expr(atom));
+                exprs.add(new Expr_Old(atom));
             }
         } else if (match(TokenType.NUMBER)) {
-            exprs.add(new Expr(new Atom(getMatch()[0].getInt())));
+            exprs.add(new Expr_Old(new Atom(getMatch()[0].getInt())));
         } else if (match(TokenType.LEFT_PAREN, TokenType.RIGHT_PAREN)) {
             // the unit expr
-            exprs.add(Expr.unit());
+            exprs.add(Expr_Old.unit());
         } else if (match(TokenType.LEFT_PAREN)) {
             exprs.addAll(sequence());
             if (!match(TokenType.RIGHT_PAREN)) {
@@ -109,8 +186,8 @@ public class LarkParser extends Parser {
         return exprs;        
     }
     
-    private Expr bracketList() {
-        List<Expr> exprs = new ArrayList<Expr>();
+    private Expr_Old bracketList() {
+        List<Expr_Old> exprs = new ArrayList<Expr_Old>();
         
         // parse sequential primary expressions and build a single list
         while (!isMatch(TokenType.RIGHT_BRACKET)) {
@@ -121,8 +198,9 @@ public class LarkParser extends Parser {
         // note that we aren't calling flatten() here because we *don't* want
         // to turn a single element list into just that element, we always want
         // to wrap it in a new Expr.
-        return new Expr(exprs);
+        return new Expr_Old(exprs);
     }
+    */
     
     private String join(Collection<?> s) {
         StringBuilder builder = new StringBuilder();
@@ -131,12 +209,5 @@ public class LarkParser extends Parser {
             builder.append(iter.next());
         }
         return builder.toString();
-    }
-
-    private Expr flatten(List<Expr> exprs) {
-        // if it's a single expression, just return it
-        if (exprs.size() == 1) return exprs.get(0);
-        
-        return new Expr(exprs);
     }
 }
