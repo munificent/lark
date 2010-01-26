@@ -10,7 +10,7 @@ public class FunctionExpr extends CallableExpr {
     }
     
     @Override
-    public Expr call(Interpreter interpreter, Environment parentScope, Expr argExpr) {
+    public Expr call(Interpreter interpreter, Scope parentScope, Expr argExpr) {
         // eagerly evaluate the arguments
         Expr arg = argExpr;
         if (!mIsMacro) {
@@ -27,7 +27,7 @@ public class FunctionExpr extends CallableExpr {
         }
         
         // create a new local scope for the function
-        Environment scope = parentScope.create();
+        Scope scope = parentScope.create();
         
         // bind the arguments to the parameters
         if (mParameters.size() == 1) {

@@ -3,21 +3,21 @@ package com.stuffwithstuff.lark;
 import java.util.Hashtable;
 
 /**
- * Represents a name environment, i.e. a scope where names can be defined and
+ * Represents a name scope, i.e. an environment where names can be defined and
  * looked up.
  */
-public class Environment {
+public class Scope {
 
-    public Environment(final Environment parent) {
+    public Scope(final Scope parent) {
         mParent = parent;
         mBound = new Hashtable<String, Expr>();
     }
     
     /**
-     * Creates a new child scope of this environment.
+     * Creates a new child scope of this scope.
      */
-    public Environment create() {
-        return new Environment(this);
+    public Scope create() {
+        return new Scope(this);
     }
     
     public Expr get(String name) {
@@ -37,6 +37,6 @@ public class Environment {
         mBound.put(name, value);
     }
     
-    private final Environment mParent;
+    private final Scope mParent;
     private final Hashtable<String, Expr> mBound;
 }

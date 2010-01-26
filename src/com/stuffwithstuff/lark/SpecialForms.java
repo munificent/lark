@@ -7,7 +7,7 @@ public class SpecialForms {
 
     public static CallableExpr quote() {
         return new CallableExpr() {
-                public Expr call(Interpreter interpreter, Environment environment, Expr argExpr) {
+                public Expr call(Interpreter interpreter, Scope scope, Expr argExpr) {
                     return argExpr;
                 }
             };
@@ -15,16 +15,16 @@ public class SpecialForms {
 
     public static CallableExpr doForm() {
         return new CallableExpr() {
-                public Expr call(Interpreter interpreter, Environment environment, Expr argExpr) {
+                public Expr call(Interpreter interpreter, Scope scope, Expr argExpr) {
                     // if the arg isn't a list, just eval it normally
-                    if (!(argExpr instanceof ListExpr)) return interpreter.eval(environment, argExpr);
+                    if (!(argExpr instanceof ListExpr)) return interpreter.eval(scope, argExpr);
                     
                     // evaluate each item in the arg list in order, returning the last one
                     ListExpr argList = (ListExpr)argExpr;
                     
                     Expr result = null;
                     for (Expr arg : argList.getList()) {
-                        result = interpreter.eval(environment, arg);
+                        result = interpreter.eval(scope, arg);
                     }
                     
                     return result;
@@ -34,8 +34,8 @@ public class SpecialForms {
 
     public static CallableExpr print() {
         return new CallableExpr() {
-                public Expr call(Interpreter interpreter, Environment environment, Expr argExpr) {
-                    Expr arg = interpreter.eval(environment, argExpr);
+                public Expr call(Interpreter interpreter, Scope scope, Expr argExpr) {
+                    Expr arg = interpreter.eval(scope, argExpr);
                     System.out.println(arg);
 
                     return Expr.unit();
@@ -45,7 +45,7 @@ public class SpecialForms {
 
     public static CallableExpr createFunction() {
         return new CallableExpr() {
-                public Expr call(Interpreter interpreter, Environment environment, Expr argExpr) {
+                public Expr call(Interpreter interpreter, Scope scope, Expr argExpr) {
                     return createFunction(false, argExpr);
                 }
             };
@@ -53,7 +53,7 @@ public class SpecialForms {
     
     public static CallableExpr createMacro() {
         return new CallableExpr() {
-                public Expr call(Interpreter interpreter, Environment environment, Expr argExpr) {
+                public Expr call(Interpreter interpreter, Scope scope, Expr argExpr) {
                     return createFunction(true, argExpr);
                 }
             };
@@ -61,7 +61,7 @@ public class SpecialForms {
     
     public static CallableExpr defIs() {
         return new CallableExpr() {
-                public Expr call(Interpreter interpreter, Environment environment, Expr argExpr) {
+                public Expr call(Interpreter interpreter, Scope scope, Expr argExpr) {
                     //### bob: need lots of error-checking all through here!
                     ListExpr args = (ListExpr)argExpr;
                     
@@ -69,7 +69,7 @@ public class SpecialForms {
                     Expr body = args.getList().get(1);
                     
                     // define the name in the current scope
-                    environment.put(name, interpreter.eval(environment, body));
+                    scope.put(name, interpreter.eval(scope, body));
                     
                     return Expr.unit();
                 }
@@ -78,7 +78,7 @@ public class SpecialForms {
     
     public static CallableExpr ifThen() {
         return new CallableExpr() {
-                public Expr call(Interpreter interpreter, Environment scope, Expr argExpr) {
+                public Expr call(Interpreter interpreter, Scope scope, Expr argExpr) {
                     if (!(argExpr instanceof ListExpr)) return interpreter.error("'if:then:' expects an argument list.");
                     
                     ListExpr argListExpr = (ListExpr)argExpr;
@@ -102,7 +102,7 @@ public class SpecialForms {
     
     public static CallableExpr ifThenElse() {
         return new CallableExpr() {
-                public Expr call(Interpreter interpreter, Environment scope, Expr argExpr) {
+                public Expr call(Interpreter interpreter, Scope scope, Expr argExpr) {
                     if (!(argExpr instanceof ListExpr)) return interpreter.error("'if:then:else:' expects an argument list.");
                     
                     ListExpr argListExpr = (ListExpr)argExpr;
@@ -126,7 +126,7 @@ public class SpecialForms {
     
     public static CallableExpr boolPredicate() {
         return new CallableExpr() {
-                public Expr call(Interpreter interpreter, Environment scope, Expr argExpr) {
+                public Expr call(Interpreter interpreter, Scope scope, Expr argExpr) {
                     Expr arg = interpreter.eval(scope, argExpr);
                     
                     return new BoolExpr(arg instanceof BoolExpr);
@@ -136,7 +136,7 @@ public class SpecialForms {
     
     public static CallableExpr intPredicate() {
         return new CallableExpr() {
-                public Expr call(Interpreter interpreter, Environment scope, Expr argExpr) {
+                public Expr call(Interpreter interpreter, Scope scope, Expr argExpr) {
                     Expr arg = interpreter.eval(scope, argExpr);
                     
                     return new BoolExpr(arg instanceof IntExpr);
@@ -146,7 +146,7 @@ public class SpecialForms {
     
     public static CallableExpr listPredicate() {
         return new CallableExpr() {
-                public Expr call(Interpreter interpreter, Environment scope, Expr argExpr) {
+                public Expr call(Interpreter interpreter, Scope scope, Expr argExpr) {
                     Expr arg = interpreter.eval(scope, argExpr);
                     
                     return new BoolExpr(arg instanceof ListExpr);
@@ -156,7 +156,7 @@ public class SpecialForms {
     
     public static CallableExpr namePredicate() {
         return new CallableExpr() {
-                public Expr call(Interpreter interpreter, Environment scope, Expr argExpr) {
+                public Expr call(Interpreter interpreter, Scope scope, Expr argExpr) {
                     Expr arg = interpreter.eval(scope, argExpr);
                     
                     return new BoolExpr(arg instanceof NameExpr);
@@ -166,7 +166,7 @@ public class SpecialForms {
     
     public static CallableExpr unitPredicate() {
         return new CallableExpr() {
-                public Expr call(Interpreter interpreter, Environment scope, Expr argExpr) {
+                public Expr call(Interpreter interpreter, Scope scope, Expr argExpr) {
                     Expr arg = interpreter.eval(scope, argExpr);
                     
                     // unit is the empty list
@@ -178,7 +178,7 @@ public class SpecialForms {
     
     public static CallableExpr count() {
         return new CallableExpr() {
-                public Expr call(Interpreter interpreter, Environment scope, Expr argExpr) {
+                public Expr call(Interpreter interpreter, Scope scope, Expr argExpr) {
                     Expr arg = interpreter.eval(scope, argExpr);
                     
                     if (!(arg instanceof ListExpr)) return interpreter.error("Argument to 'count' must be a list.");

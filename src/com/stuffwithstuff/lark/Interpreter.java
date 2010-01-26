@@ -5,7 +5,7 @@ import java.util.*;
 public class Interpreter {
 
     public Interpreter() {
-        mGlobal = new Environment(null);
+        mGlobal = new Scope(null);
         
         // register the special forms
         mGlobal.put("'", SpecialForms.quote());
@@ -31,7 +31,7 @@ public class Interpreter {
         return eval(mGlobal, expr);
     }
     
-    public Expr eval(Environment scope, Expr expr) {
+    public Expr eval(Scope scope, Expr expr) {
         //### bob: instanceof here is lame...
         if (expr.isLiteral()) {
             // literals, by definition, evaluate to themselves
@@ -39,7 +39,7 @@ public class Interpreter {
             
         } else if (expr instanceof NameExpr) {
 
-            // look up a name in the environment
+            // look up a name in the scope
             return scope.get(((NameExpr)expr).getName());
             
         } else if (expr instanceof ListExpr) {
@@ -65,7 +65,7 @@ public class Interpreter {
         return Expr.unit();
     }
     
-    private Expr apply(Environment scope, Expr functionExpr, Expr argExpr) {
+    private Expr apply(Scope scope, Expr functionExpr, Expr argExpr) {
         // evaluate the expression for the function we're calling
         Expr function = eval(scope, functionExpr);
                 
@@ -77,5 +77,5 @@ public class Interpreter {
         return ((CallableExpr)function).call(this, scope, argExpr);
     }
     
-    private final Environment mGlobal;
+    private final Scope mGlobal;
 }

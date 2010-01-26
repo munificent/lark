@@ -13,7 +13,7 @@ public class IntExpr extends CallableExpr {
     }
     
     @Override
-    public Expr call(Interpreter interpreter, Environment scope, Expr argExpr) {
+    public Expr call(Interpreter interpreter, Scope scope, Expr argExpr) {
         // an int is a "function" that takes a list and returns the element
         // at that (zero-based) index in the list
         // > 1 (4, 5, 6)
