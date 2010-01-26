@@ -31,23 +31,9 @@ Prefix functions
 ----------------
 The basic Lark syntax looks much like C. Any series of characters
 that starts with a letter (and isn't a keyword, explained below) is
-considered a function name. The following:
+considered a function name. Ex:
 
     sum (a, abs (b))
-
-will be parsed as:
-
-        ,-----,
-        | sum |
-        `-----'
-        /     \
-    ,---,    ,-----,
-    | a |    | abs |
-    `---'    `-----'
-                |
-              ,---,
-              | b |
-              `---'
 
 If a function call only takes a single argument, the parentheses can
 be omitted. Unlike Lisp, parentheses in Lark are only for grouping.
