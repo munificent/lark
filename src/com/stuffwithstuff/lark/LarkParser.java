@@ -30,6 +30,9 @@ public class LarkParser extends Parser {
             exprs.add(keyword());
         }
         
+        // only create a list if we actually had a ,
+        if (exprs.size() == 1) return exprs.get(0);
+        
         return new ListExpr(exprs);
     }
     
