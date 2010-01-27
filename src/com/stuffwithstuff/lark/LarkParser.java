@@ -121,6 +121,16 @@ public class LarkParser extends Parser {
                 return Expr.unit();
             }
             
+            // handle (operator) and (keyword:) so that you can create
+            // name exprs for operators and keywords without actually
+            // having to parse them as used.
+            if (match(TokenType.OPERATOR, TokenType.RIGHT_PAREN)) {
+                return new NameExpr(getMatch()[0].getString());
+            }
+            if (match(TokenType.KEYWORD, TokenType.RIGHT_PAREN)) {
+                return new NameExpr(getMatch()[0].getString());
+            }
+            
             Expr expr = list();
             
             if (!match(TokenType.RIGHT_PAREN)) {

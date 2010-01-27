@@ -29,7 +29,12 @@ public class Lexer {
                 case '}': return singleCharToken(TokenType.RIGHT_BRACE);
                 case ',': return singleCharToken(TokenType.COMMA);
                 case '.': return singleCharToken(TokenType.DOT);
-                case ':': return singleCharToken(TokenType.KEYWORD);
+                
+                case ':':
+                    // start a multi-character token so that ":::" is a single
+                    // keyword
+                    startToken(LexState.IN_KEYWORD);
+                    break;
 
                 // ignore whitespace
                 case ' ':
@@ -60,7 +65,7 @@ public class Lexer {
                     mIndex++;
                 } else if (c == ':') {
                     mIndex++;
-                    return createStringToken(TokenType.KEYWORD);
+                    mState = LexState.IN_KEYWORD;
                 } else {
                     return createStringToken(TokenType.NAME);
                 }
@@ -74,6 +79,14 @@ public class Lexer {
                 }
                 break;
 
+            case IN_KEYWORD:
+                if (isOperator(c) || isAlpha(c) || isDigit(c) || (c == ':')) {
+                    mIndex++;
+                } else {
+                    return createStringToken(TokenType.KEYWORD);
+                }
+                break;
+                
             case IN_NUMBER:
                 if (isDigit(c)) {
                     mIndex++;
@@ -130,6 +143,7 @@ public class Lexer {
         DEFAULT,
         IN_NAME,
         IN_OPERATOR,
+        IN_KEYWORD,
         IN_NUMBER
     }
 

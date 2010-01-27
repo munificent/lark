@@ -3,7 +3,8 @@ package com.stuffwithstuff.lark;
 import java.util.*;
 
 public class FunctionExpr extends CallableExpr {
-    public FunctionExpr(boolean isMacro, List<String> parameters, Expr body) {
+    public FunctionExpr(Scope closure, boolean isMacro, List<String> parameters, Expr body) {
+        mClosure = closure;
         mIsMacro = isMacro;
         mParameters = new ArrayList<String>(parameters);
         mBody = body;
@@ -27,7 +28,7 @@ public class FunctionExpr extends CallableExpr {
         }
         
         // create a new local scope for the function
-        Scope scope = parentScope.create();
+        Scope scope = mClosure.create();
         
         // bind the arguments to the parameters
         if (mParameters.size() == 1) {
@@ -48,6 +49,7 @@ public class FunctionExpr extends CallableExpr {
         return true;
     }
 
+    private final Scope mClosure;
     private final boolean mIsMacro;
     private final List<String> mParameters;
     private final Expr mBody;

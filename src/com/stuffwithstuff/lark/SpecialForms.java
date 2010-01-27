@@ -46,7 +46,7 @@ public class SpecialForms {
     public static CallableExpr createFunction() {
         return new CallableExpr() {
                 public Expr call(Interpreter interpreter, Scope scope, Expr argExpr) {
-                    return createFunction(false, argExpr);
+                    return createFunction(false, scope, argExpr);
                 }
             };
     }
@@ -54,7 +54,7 @@ public class SpecialForms {
     public static CallableExpr createMacro() {
         return new CallableExpr() {
                 public Expr call(Interpreter interpreter, Scope scope, Expr argExpr) {
-                    return createFunction(true, argExpr);
+                    return createFunction(true, scope, argExpr);
                 }
             };
     }
@@ -189,7 +189,7 @@ public class SpecialForms {
             };
     }
     
-    private static Expr createFunction(boolean isMacro, Expr arg) {
+    private static Expr createFunction(boolean isMacro, Scope scope, Expr arg) {
         //### bob: need lots of error-handling here
         ListExpr argList = (ListExpr)arg;
         
@@ -208,7 +208,7 @@ public class SpecialForms {
         }
         
         // create the function
-        return new FunctionExpr(isMacro, paramNames, argList.getList().get(1));
+        return new FunctionExpr(scope, isMacro, paramNames, argList.getList().get(1));
         //### bob: need to support closures at some point
     }
 }
