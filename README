@@ -185,6 +185,11 @@ This starts up the Lark REPL, like this:
 From there you can enter expressions, which the interpreter will
 evaluate and print the result.
 
+You can also tell lark to load and interpret a script stored in a
+separate file by passing in the path to the file to lark:
+
+  $./lark path/to/my/file.lark
+
 Built-in functions
 ==================
 
