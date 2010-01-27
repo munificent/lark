@@ -24,11 +24,10 @@ public class LarkParser extends Parser {
     
     private Expr list() {
         List<Expr> exprs = new ArrayList<Expr>();
-        exprs.add(keyword());
         
-        while (match(TokenType.COMMA)) {
+        do {
             exprs.add(keyword());
-        }
+        } while (match(TokenType.COMMA));
         
         // only create a list if we actually had a ,
         if (exprs.size() == 1) return exprs.get(0);
@@ -140,9 +139,30 @@ public class LarkParser extends Parser {
             }
             
             return expr;
+        } else if (match(TokenType.LEFT_BRACE)) {
+            
+            Expr expr = doList();
+            
+            if (!match(TokenType.RIGHT_BRACE)) {
+                // no closing )
+                //### bob: need error-handling!
+                return new NameExpr("missing closing )!");
+            }
+            
+            return expr;
         }
         
         return null;
+    }
+    
+    private Expr doList() {
+        List<Expr> exprs = new ArrayList<Expr>();
+        
+        do {
+            exprs.add(list());
+        } while(match(TokenType.SEMICOLON));
+        
+        return new CallExpr(new NameExpr("do"), new ListExpr(exprs));        
     }
     
     private String join(Collection<?> s) {

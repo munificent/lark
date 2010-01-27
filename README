@@ -6,6 +6,7 @@ Lark is an experiment in designing a homoiconic language with a syntax
 inspired by SmallTalk. It's very early, so there isn't much to see
 yet, but you can play with it.
 
+
 Lark Syntax
 ===========
 
@@ -27,19 +28,48 @@ above is the only syntax.
 This *should* mean that it'll be as easy to make powerful macros in
 Lark as it is in Scheme.
 
+
+Names
+-----
+The simplest syntactical element in Lark are names, identifiers. There
+are three kinds of identifiers. Regular ones start with a letter and
+don't contain any colons. Like:
+
+    a, abs, do-something, what?!, abc123
+
+They are used for regular prefix function calls and don't trigger any
+special parsing, so you can just stick them anywhere.
+
+Operators start with a punctuation character, like:
+
+    +, -, !can-have-letters-too!, !@#%#$$&$
+
+An operator name will cause the parser to parse an infix expression.
+If you don't want that, and just want to use the name of an operator
+for something (for example, to pass it to a function), you can do so
+by surrounding it in (). This:
+
+    (+) (1, 2)
+    
+is the same as:
+
+    1 + 2
+
+Keywords start with a letter and contain at least one colon. A colon
+by itself is also a keyword. Ex:
+
+    if:, :, multiple:colons:in:one:
+
+Like operators, keywords will trigger special parsing, so must be put
+in parentheses if you just want to treat it like a name.
+
 Prefix functions
 ----------------
-The basic Lark syntax looks much like C. Any series of characters
-that starts with a letter (and isn't a keyword, explained below) is
-considered a function name. Ex:
+The basic Lark syntax looks much like C. A regular name followed by an
+expression will call that named function and pass it the given
+argument. Ex:
 
-    sum (a, abs (b))
-
-If a function call only takes a single argument, the parentheses can
-be omitted. Unlike Lisp, parentheses in Lark are only for grouping.
-The above can also be written:
-
-    sum (a, abs b)
+    square 123
 
 Dotted functions
 ----------------
@@ -66,11 +96,9 @@ you can use:
 
 Operators
 ---------
-Operators are parsed like SmallTalk. Any sequence of characters
-starting with a punctuation one is considered an operator and will
-be parsed in infix position. All operators have the same precedence
-(no Dear Aunt Sally), and are parsed from left to right. The
-expression:
+Operators are parsed like SmallTalk. All operators have the same
+precedence (no Dear Aunt Sally), and are parsed from left to right.
+The expression:
 
     a + b * c @#%! d
     
@@ -80,11 +108,9 @@ is equivalent to:
 
 Keywords
 --------
-Lark has keywords that work similar to SmallTalk. A keyword starts
-with a letter, has any number of other characters, and ends with a
-colon (":"). (A single ":" by itself is also a valid keyword.) The
-parser will translate a series of keywords separated by arguments into
-a single keyword node. This:
+Lark has keywords that work similar to SmallTalk. The parser will
+translate a series of keywords separated by arguments into a single
+keyword name followed by the list of arguments. This:
 
     if: a then: b else: c
 
@@ -106,6 +132,22 @@ low precedence. For example:
     difference 1, 2     ===>  (difference(1), 2)
     difference (1, 2)   ===>  difference(1, 2)
 
+Braces
+------
+A series of expressions separated by semicolons and surrounded by
+curly braces is syntactical sugar for a "do" function call. This gives
+us a simple syntax for expressing a sequence of things that executed
+in order (which is what the "do" special form is for). So this:
+
+    { print 1, 2; print 3, 4 }
+    
+is parsed as:
+
+    do (print (1, 2), print (3, 4))
+
+Note that the semicolons are *separators*, not *terminators*. The last
+expression does not have one after it.
+
 Precedence
 ----------
 The precedence rules follow SmallTalk. From highest to lowest, it is
@@ -119,6 +161,7 @@ is parsed as:
 
 That's the basic syntax. The Lark parser reads that and immediately
 translates it to the much simpler core syntax.
+
 
 Running Lark
 ============

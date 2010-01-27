@@ -28,6 +28,7 @@ public class Lexer {
                 case '{': return singleCharToken(TokenType.LEFT_BRACE);
                 case '}': return singleCharToken(TokenType.RIGHT_BRACE);
                 case ',': return singleCharToken(TokenType.COMMA);
+                case ';': return singleCharToken(TokenType.SEMICOLON);
                 case '.': return singleCharToken(TokenType.DOT);
                 
                 case ':':
