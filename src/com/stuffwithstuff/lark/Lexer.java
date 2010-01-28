@@ -105,7 +105,7 @@ public class Lexer {
                 } else if (isOperator(c) || isAlpha(c)) {
                     changeToken(LexState.IN_OPERATOR);
                 } else {
-                    return createIntToken(TokenType.NUMBER);
+                    return createStringToken(TokenType.OPERATOR);
                 }
                 break;
             }
