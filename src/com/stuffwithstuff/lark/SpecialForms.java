@@ -62,16 +62,15 @@ public class SpecialForms {
     public static CallableExpr defIs() {
         return new CallableExpr() {
             public Expr call(Interpreter interpreter, Scope scope, Expr argExpr) {
-                //### bob: need lots of error-checking all through here!
-                ListExpr args = (ListExpr)argExpr;
-                
-                String name = ((NameExpr)args.getList().get(0)).getName();
-                Expr body = args.getList().get(1);
-                
-                // define the name in the current scope
-                scope.put(name, interpreter.eval(scope, body));
-                
-                return Expr.unit();
+                return define(false, interpreter, scope, argExpr);
+            }
+        };
+    }
+    
+    public static CallableExpr globalIs() {
+        return new CallableExpr() {
+            public Expr call(Interpreter interpreter, Scope scope, Expr argExpr) {
+                return define(true, interpreter, scope, argExpr);
             }
         };
     }
@@ -187,6 +186,24 @@ public class SpecialForms {
                 return new IntExpr(list.getList().size());
             }
         };
+    }
+    
+    private static Expr define(boolean isGlobal, Interpreter interpreter, Scope scope, Expr argExpr) {
+        //### bob: need lots of error-checking all through here!
+        ListExpr args = (ListExpr)argExpr;
+        
+        String name = ((NameExpr)args.getList().get(0)).getName();
+        Expr body = args.getList().get(1);
+        
+        // define the name in the correct scope
+        Expr value = interpreter.eval(scope, body);
+        if (isGlobal) {
+            interpreter.getGlobalScope().put(name, value);
+        } else {
+            scope.put(name, value);            
+        }
+        
+        return Expr.unit();
     }
     
     private static Expr createFunction(boolean isMacro, Scope scope, Expr arg) {

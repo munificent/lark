@@ -14,6 +14,7 @@ public class Interpreter {
         mGlobal.put("=>", SpecialForms.createFunction());
         mGlobal.put("=>>", SpecialForms.createMacro());
         mGlobal.put("def:is:", SpecialForms.defIs());
+        mGlobal.put("global:is:", SpecialForms.globalIs());
         
         mGlobal.put("if:then:", SpecialForms.ifThen());
         mGlobal.put("if:then:else:", SpecialForms.ifThenElse());
@@ -30,6 +31,10 @@ public class Interpreter {
         mGlobal.put("-", Arithmetic.subtract());
         mGlobal.put("*", Arithmetic.multiply());
         mGlobal.put("/", Arithmetic.divide());
+    }
+    
+    public Scope getGlobalScope() {
+        return mGlobal;
     }
     
     public Expr eval(Expr expr) {

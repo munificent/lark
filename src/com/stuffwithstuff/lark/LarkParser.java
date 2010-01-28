@@ -67,19 +67,25 @@ public class LarkParser extends Parser {
     }
     
     private Expr call() {
-        Expr left = dottedOrNull();
+        Stack<Expr> stack = new Stack<Expr>();
         
-        //### bob: need error-handling
-        if (left == null) return new NameExpr("parse error, expected primary");
-        
+        // push as many calls as we can parse
         while (true) {
-            Expr right = dottedOrNull();
-            if (right == null) break;
-            
-            left = new CallExpr(left, right);
+            Expr expr = dottedOrNull();
+            if (expr == null) break;
+            stack.push(expr);
         }
         
-        return left;
+        //### bob: need error-handling
+        if (stack.size() == 0) return new NameExpr("parse error, expected primary");
+        
+        // and then pop them back off to be right-associative
+        Expr result = stack.pop();
+        while (stack.size() > 0) {
+            result = new CallExpr(stack.pop(), result);
+        }
+        
+        return result;
     }
 
     private Expr dottedOrNull() {
