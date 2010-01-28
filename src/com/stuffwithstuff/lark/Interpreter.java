@@ -25,6 +25,11 @@ public class Interpreter {
         mGlobal.put("unit?", SpecialForms.unitPredicate());
 
         mGlobal.put("count", SpecialForms.count());
+
+        mGlobal.put("+", Arithmetic.add());
+        mGlobal.put("-", Arithmetic.subtract());
+        mGlobal.put("*", Arithmetic.multiply());
+        mGlobal.put("/", Arithmetic.divide());
     }
     
     public Expr eval(Expr expr) {

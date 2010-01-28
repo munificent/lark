@@ -37,6 +37,10 @@ public class Lexer {
                     startToken(LexState.IN_KEYWORD);
                     break;
 
+                case '-':
+                    startToken(LexState.IN_MINUS);
+                    break;
+                    
                 // ignore whitespace
                 case ' ':
                 case '\n':
@@ -65,8 +69,7 @@ public class Lexer {
                 if (isAlpha(c) || isDigit(c) || isOperator(c)) {
                     mIndex++;
                 } else if (c == ':') {
-                    mIndex++;
-                    mState = LexState.IN_KEYWORD;
+                    changeToken(LexState.IN_KEYWORD);
                 } else {
                     return createStringToken(TokenType.NAME);
                 }
@@ -95,6 +98,16 @@ public class Lexer {
                     return createIntToken(TokenType.NUMBER);
                 }
                 break;
+                
+            case IN_MINUS:
+                if (isDigit(c)) {
+                    changeToken(LexState.IN_NUMBER);
+                } else if (isOperator(c) || isAlpha(c)) {
+                    changeToken(LexState.IN_OPERATOR);
+                } else {
+                    return createIntToken(TokenType.NUMBER);
+                }
+                break;
             }
         }
         
@@ -108,8 +121,12 @@ public class Lexer {
 
     private void startToken(LexState state) {
         mTokenStart = mIndex;
+        changeToken(state);
+    }
+    
+    private void changeToken(LexState state) {
         mState = state;
-        mIndex++;        
+        mIndex++;
     }
     
     private Token createStringToken(TokenType type) {
@@ -145,7 +162,8 @@ public class Lexer {
         IN_NAME,
         IN_OPERATOR,
         IN_KEYWORD,
-        IN_NUMBER
+        IN_NUMBER,
+        IN_MINUS
     }
 
     private final String mText;
