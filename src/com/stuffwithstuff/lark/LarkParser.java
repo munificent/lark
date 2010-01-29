@@ -19,34 +19,47 @@ public class LarkParser extends Parser {
     }
     
     public Expr parse() {
-        return list();
+        return semicolonList();
     }
     
-    private Expr list() {
+    private Expr semicolonList() {
         List<Expr> exprs = new ArrayList<Expr>();
         
         do {
             exprs.add(keyword());
-        } while (match(TokenType.COMMA));
+        } while(match(TokenType.SEMICOLON));
         
-        // only create a list if we actually had a ,
+        // only create a list if we actually had a ;
         if (exprs.size() == 1) return exprs.get(0);
-        
-        return new ListExpr(exprs);
+
+        return new ListExpr(exprs);        
     }
     
     private Expr keyword() {
-        if (!isMatch(TokenType.KEYWORD)) return operator();
+        if (!isMatch(TokenType.KEYWORD)) return commaList();
 
         List<String> keywords = new ArrayList<String>();
         List<Expr> args = new ArrayList<Expr>();
 
         while (match(TokenType.KEYWORD)) {
             keywords.add(getMatch()[0].getString());
-            args.add(operator());
+            args.add(commaList());
         }
 
         return new CallExpr(new NameExpr(join(keywords)), new ListExpr(args));
+    }
+
+    private Expr commaList() {
+        List<Expr> exprs = new ArrayList<Expr>();
+        
+        do {
+            exprs.add(operator());
+        } while (match(TokenType.COMMA));
+        
+        // only create a list if we actually had a ,
+        if (exprs.size() == 1) return exprs.get(0);
+        
+        return new ListExpr(exprs);
     }
 
     private Expr operator() {
@@ -136,7 +149,7 @@ public class LarkParser extends Parser {
                 return new NameExpr(getMatch()[0].getString());
             }
             
-            Expr expr = list();
+            Expr expr = semicolonList();
             
             if (!match(TokenType.RIGHT_PAREN)) {
                 // no closing )
@@ -147,7 +160,7 @@ public class LarkParser extends Parser {
             return expr;
         } else if (match(TokenType.LEFT_BRACE)) {
             
-            Expr expr = doList();
+            Expr expr = semicolonList();
             
             if (!match(TokenType.RIGHT_BRACE)) {
                 // no closing )
@@ -159,16 +172,6 @@ public class LarkParser extends Parser {
         }
         
         return null;
-    }
-    
-    private Expr doList() {
-        List<Expr> exprs = new ArrayList<Expr>();
-        
-        do {
-            exprs.add(list());
-        } while(match(TokenType.SEMICOLON));
-        
-        return new CallExpr(new NameExpr("do"), new ListExpr(exprs));        
     }
     
     private String join(Collection<?> s) {
