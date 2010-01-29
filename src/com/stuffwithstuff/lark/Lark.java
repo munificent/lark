@@ -38,6 +38,8 @@ public class Lark {
             Expr expr = parser.parse();
             
             if (expr != null) {
+                System.out.println(": " + expr);
+                
                 Expr result = interpreter.eval(expr);
                 System.out.println("= " + result.toString());
             } else {

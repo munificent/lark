@@ -8,11 +8,8 @@ public class LarkParser extends Parser {
     // keywords that follow first arg?
     //   a b: c
     // [] for s-expr-style lists
-    // { a; b } that desugars to do (a, b)?
-    // (+) for creating name from operator
-    // (foo:) for creating name from keyword
     // strings
-    // negative numbers and decimals
+    // decimals
     
     public LarkParser(Lexer lexer) {
         super(lexer);
@@ -159,7 +156,7 @@ public class LarkParser extends Parser {
             
             return expr;
         } else if (match(TokenType.LEFT_BRACE)) {
-            
+            // { a } -> do a
             Expr expr = semicolonList();
             
             if (!match(TokenType.RIGHT_BRACE)) {
@@ -168,7 +165,24 @@ public class LarkParser extends Parser {
                 return new NameExpr("missing closing )!");
             }
             
-            return expr;
+            return new CallExpr(new NameExpr("do"), expr);
+        } else if (match(TokenType.LEFT_BRACKET)) {
+            
+            List<Expr> exprs = new ArrayList<Expr>();
+            
+            while (true) {
+                Expr term = primaryOrNull();
+                if (term == null) break;
+                exprs.add(term);
+            }
+            
+            if (!match(TokenType.RIGHT_BRACKET)) {
+                // no closing ]
+                //### bob: need error-handling!
+                return new NameExpr("missing closing ]!");
+            }
+            
+            return new ListExpr(exprs);
         }
         
         return null;
