@@ -64,6 +64,96 @@ public class Arithmetic {
             }
         };
     }
+
+    public static CallableExpr equals() {
+        return new CallableExpr() {
+            public Expr call(Interpreter interpreter, Scope scope, Expr argExpr) {
+                Expr arg = interpreter.eval(scope, argExpr);
+                Expr error = validateBinaryArg(interpreter, "=", arg);
+                if (error != null) return error;
+                
+                ListExpr argList = (ListExpr)arg;
+                
+                return new BoolExpr(((IntExpr)argList.getList().get(0)).getValue() ==
+                                   ((IntExpr)argList.getList().get(1)).getValue());
+            }
+        };
+    }
+
+    public static CallableExpr notEquals() {
+        return new CallableExpr() {
+            public Expr call(Interpreter interpreter, Scope scope, Expr argExpr) {
+                Expr arg = interpreter.eval(scope, argExpr);
+                Expr error = validateBinaryArg(interpreter, "!=", arg);
+                if (error != null) return error;
+                
+                ListExpr argList = (ListExpr)arg;
+                
+                return new BoolExpr(((IntExpr)argList.getList().get(0)).getValue() !=
+                                   ((IntExpr)argList.getList().get(1)).getValue());
+            }
+        };
+    }
+
+    public static CallableExpr lessThan() {
+        return new CallableExpr() {
+            public Expr call(Interpreter interpreter, Scope scope, Expr argExpr) {
+                Expr arg = interpreter.eval(scope, argExpr);
+                Expr error = validateBinaryArg(interpreter, "<", arg);
+                if (error != null) return error;
+                
+                ListExpr argList = (ListExpr)arg;
+                
+                return new BoolExpr(((IntExpr)argList.getList().get(0)).getValue() <
+                                   ((IntExpr)argList.getList().get(1)).getValue());
+            }
+        };
+    }
+
+    public static CallableExpr greaterThan() {
+        return new CallableExpr() {
+            public Expr call(Interpreter interpreter, Scope scope, Expr argExpr) {
+                Expr arg = interpreter.eval(scope, argExpr);
+                Expr error = validateBinaryArg(interpreter, ">", arg);
+                if (error != null) return error;
+                
+                ListExpr argList = (ListExpr)arg;
+                
+                return new BoolExpr(((IntExpr)argList.getList().get(0)).getValue() >
+                                   ((IntExpr)argList.getList().get(1)).getValue());
+            }
+        };
+    }
+
+    public static CallableExpr lessThanOrEqual() {
+        return new CallableExpr() {
+            public Expr call(Interpreter interpreter, Scope scope, Expr argExpr) {
+                Expr arg = interpreter.eval(scope, argExpr);
+                Expr error = validateBinaryArg(interpreter, "<=", arg);
+                if (error != null) return error;
+                
+                ListExpr argList = (ListExpr)arg;
+                
+                return new BoolExpr(((IntExpr)argList.getList().get(0)).getValue() <=
+                                   ((IntExpr)argList.getList().get(1)).getValue());
+            }
+        };
+    }
+
+    public static CallableExpr greaterThanOrEqual() {
+        return new CallableExpr() {
+            public Expr call(Interpreter interpreter, Scope scope, Expr argExpr) {
+                Expr arg = interpreter.eval(scope, argExpr);
+                Expr error = validateBinaryArg(interpreter, ">=", arg);
+                if (error != null) return error;
+                
+                ListExpr argList = (ListExpr)arg;
+                
+                return new BoolExpr(((IntExpr)argList.getList().get(0)).getValue() >=
+                                   ((IntExpr)argList.getList().get(1)).getValue());
+            }
+        };
+    }
    
     private static Expr validateBinaryArg(Interpreter interpreter, String op, Expr arg) {
         if (!(arg instanceof ListExpr)) return interpreter.error("'" + op + "' requires two arguments.");

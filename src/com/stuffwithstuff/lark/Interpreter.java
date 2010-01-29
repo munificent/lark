@@ -31,6 +31,13 @@ public class Interpreter {
         mGlobal.put("-", Arithmetic.subtract());
         mGlobal.put("*", Arithmetic.multiply());
         mGlobal.put("/", Arithmetic.divide());
+
+        mGlobal.put("=", Arithmetic.equals());
+        mGlobal.put("!=", Arithmetic.notEquals());
+        mGlobal.put("<", Arithmetic.lessThan());
+        mGlobal.put(">", Arithmetic.greaterThan());
+        mGlobal.put("<=", Arithmetic.lessThanOrEqual());
+        mGlobal.put(">=", Arithmetic.greaterThanOrEqual());
     }
     
     public Scope getGlobalScope() {
