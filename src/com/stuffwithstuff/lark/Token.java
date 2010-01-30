@@ -43,6 +43,7 @@ public final class Token {
             case KEYWORD: return "[key] " + mStringValue;
 
             case NUMBER: return Integer.toString(mIntValue);
+            case STRING: return "\"" + mStringValue + "\"";
 
             case EOF: return "[eof]";
 

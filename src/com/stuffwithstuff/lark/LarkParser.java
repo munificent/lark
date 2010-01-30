@@ -130,6 +130,9 @@ public class LarkParser extends Parser {
         } else if (match(TokenType.NUMBER)) {
             return new IntExpr(getMatch()[0].getInt());
             
+        } else if (match(TokenType.STRING)) {
+            return new StringExpr(getMatch()[0].getString());
+            
         } else if (match(TokenType.LEFT_PAREN)) {
             // () is unit
             if (match(TokenType.RIGHT_PAREN)) {

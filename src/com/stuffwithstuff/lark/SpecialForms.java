@@ -36,7 +36,7 @@ public class SpecialForms {
         return new CallableExpr() {
             public Expr call(Interpreter interpreter, Scope scope, Expr argExpr) {
                 Expr arg = interpreter.eval(scope, argExpr);
-                System.out.println(arg);
+                interpreter.print(arg.toString());
 
                 return Expr.unit();
             }

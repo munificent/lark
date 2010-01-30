@@ -16,6 +16,7 @@ public enum TokenType {
     KEYWORD,
 
     NUMBER,
-
+    STRING,
+    
     EOF
 }

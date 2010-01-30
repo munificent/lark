@@ -3,8 +3,17 @@ package com.stuffwithstuff.lark;
 import java.util.*;
 
 public class Interpreter {
-
     public Interpreter() {
+        this(null);
+    }
+    
+    public Interpreter(Printable printable) {
+        if (printable != null) {
+            mPrintable = printable;
+        } else {
+            mPrintable = new SysOutPrintable();
+        }
+        
         mGlobal = new Scope(null);
         
         // register the special forms
@@ -77,9 +86,13 @@ public class Interpreter {
         }
     }
     
-    public Expr error(String message) {
-        System.out.println("! " + message);
+    public Expr error(final String message) {
+        mPrintable.print("! " + message);
         return Expr.unit();
+    }
+    
+    public void print(final String message) {
+        mPrintable.print(message);
     }
     
     private Expr apply(Scope scope, Expr functionExpr, Expr argExpr) {
@@ -94,5 +107,12 @@ public class Interpreter {
         return ((CallableExpr)function).call(this, scope, argExpr);
     }
     
+    private static class SysOutPrintable implements Printable {
+        public void print(final String text) {
+            System.out.println(text);
+        }
+    }
+    
     private final Scope mGlobal;
+    private Printable mPrintable;
 }

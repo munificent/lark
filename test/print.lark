@@ -1,0 +1,11 @@
+# output: ()
+# output: 123
+# output: hi there
+# output: a-name
+# output: (1, hello)
+# result: ()
+print ();
+print 123;
+print "hi there";
+print ' a-name;
+print (1, "hello")

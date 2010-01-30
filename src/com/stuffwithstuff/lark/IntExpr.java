@@ -30,6 +30,8 @@ public class IntExpr extends CallableExpr {
         if (mValue >= list.getList().size()) return interpreter.error("Index is out of bounds.");
         
         return list.getList().get(mValue);
+        
+        //### bob: should also work for getting a character from a string?
     }
     
     @Override

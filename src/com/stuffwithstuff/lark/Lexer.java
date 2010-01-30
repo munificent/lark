@@ -31,6 +31,9 @@ public class Lexer {
                 case ';': return singleCharToken(TokenType.SEMICOLON);
                 case '.': return singleCharToken(TokenType.DOT);
                 
+                case '"': startToken(LexState.IN_STRING); break;
+                case '#': startToken(LexState.IN_COMMENT); break;
+                
                 case ':':
                     // start a multi-character token so that ":::" is a single
                     // keyword
@@ -108,6 +111,33 @@ public class Lexer {
                     return createStringToken(TokenType.OPERATOR);
                 }
                 break;
+                
+            case IN_STRING:
+                if (c == '"') {
+                    // eat the closing "
+                    mIndex++;
+                    
+                    // get the contained string without the quotes
+                    String text = mText.substring(mTokenStart + 1, mIndex - 1);
+                    mState = LexState.DEFAULT;
+                    return new Token(TokenType.STRING, text);
+                } else if (c == '\0') {
+                    //### bob: need error handling. ran out of characters before
+                    // string was closed
+                    return new Token(TokenType.EOF);
+                } else {
+                    mIndex++;
+                }
+                break;
+                
+            case IN_COMMENT:
+                if ((c == '\n') || (c == '\r')) {
+                    mIndex++;
+                    mState = LexState.DEFAULT;
+                } else {
+                    mIndex++;
+                }
+                break;
             }
         }
         
@@ -153,8 +183,7 @@ public class Lexer {
     }
 
     private boolean isOperator(final char c) {
-        // note: ` and . are not operators
-        return "~!@#$%^&*-=+\\|/?<>".indexOf(c) != -1;
+        return "`~!@#$%^&*-=+\\|/?<>".indexOf(c) != -1;
     }
 
     private enum LexState {
@@ -163,7 +192,9 @@ public class Lexer {
         IN_OPERATOR,
         IN_KEYWORD,
         IN_NUMBER,
-        IN_MINUS
+        IN_MINUS,
+        IN_STRING,
+        IN_COMMENT
     }
 
     private final String mText;
