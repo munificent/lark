@@ -5,10 +5,6 @@ import java.util.*;
 public class LarkParser extends Parser {
     
     //### bob: other stuff to support
-    // keywords that follow first arg?
-    //   a b: c
-    // [] for s-expr-style lists
-    // strings
     // decimals
     
     public LarkParser(Lexer lexer) {
@@ -128,7 +124,7 @@ public class LarkParser extends Parser {
             return new NameExpr(name);
             
         } else if (match(TokenType.NUMBER)) {
-            return new IntExpr(getMatch()[0].getInt());
+            return new NumExpr(getMatch()[0].getDouble());
             
         } else if (match(TokenType.STRING)) {
             return new StringExpr(getMatch()[0].getString());

@@ -1,11 +1,13 @@
 package com.stuffwithstuff.lark;
 
-public class IntExpr extends CallableExpr {
-    public IntExpr(final int value) {
+import java.text.NumberFormat;
+
+public class NumExpr extends CallableExpr {
+    public NumExpr(final double value) {
         mValue = value;
     }
     
-    public int getValue() { return mValue; }
+    public double getValue() { return mValue; }
     
     @Override
     public boolean isLiteral() {
@@ -26,16 +28,27 @@ public class IntExpr extends CallableExpr {
         
         ListExpr list = (ListExpr)arg;
         
-        if (mValue < 0) return interpreter.error("Index must be non-negative.");
-        if (mValue >= list.getList().size()) return interpreter.error("Index is out of bounds.");
+        int index = (int)mValue;
         
-        return list.getList().get(mValue);
+        if (index < 0) return interpreter.error("Index must be non-negative.");
+        if (index >= list.getList().size()) return interpreter.error("Index is out of bounds.");
+        
+        return list.getList().get(index);
         
         //### bob: should also work for getting a character from a string?
     }
     
     @Override
-    public String toString() { return Integer.toString(mValue); }
- 
-    private final int mValue;
+    public String toString() {
+        return sFormat.format(mValue);
+    }
+
+    private static final NumberFormat sFormat;
+    
+    static {
+        sFormat = NumberFormat.getInstance();
+        sFormat.setMinimumFractionDigits(0);
+    }
+    
+    private final double mValue;
 }

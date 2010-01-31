@@ -14,8 +14,8 @@ public class Arithmetic {
                 
                 ListExpr argList = (ListExpr)arg;
                 
-                return new IntExpr(((IntExpr)argList.getList().get(0)).getValue() +
-                                   ((IntExpr)argList.getList().get(1)).getValue());
+                return new NumExpr(((NumExpr)argList.getList().get(0)).getValue() +
+                                   ((NumExpr)argList.getList().get(1)).getValue());
             }
         };
     }
@@ -29,8 +29,8 @@ public class Arithmetic {
                 
                 ListExpr argList = (ListExpr)arg;
                 
-                return new IntExpr(((IntExpr)argList.getList().get(0)).getValue() -
-                                   ((IntExpr)argList.getList().get(1)).getValue());
+                return new NumExpr(((NumExpr)argList.getList().get(0)).getValue() -
+                                   ((NumExpr)argList.getList().get(1)).getValue());
             }
         };
     }
@@ -44,8 +44,8 @@ public class Arithmetic {
                 
                 ListExpr argList = (ListExpr)arg;
                 
-                return new IntExpr(((IntExpr)argList.getList().get(0)).getValue() *
-                                   ((IntExpr)argList.getList().get(1)).getValue());
+                return new NumExpr(((NumExpr)argList.getList().get(0)).getValue() *
+                                   ((NumExpr)argList.getList().get(1)).getValue());
             }
         };
     }
@@ -59,8 +59,8 @@ public class Arithmetic {
                 
                 ListExpr argList = (ListExpr)arg;
                 
-                return new IntExpr(((IntExpr)argList.getList().get(0)).getValue() /
-                                   ((IntExpr)argList.getList().get(1)).getValue());
+                return new NumExpr(((NumExpr)argList.getList().get(0)).getValue() /
+                                   ((NumExpr)argList.getList().get(1)).getValue());
             }
         };
     }
@@ -74,8 +74,8 @@ public class Arithmetic {
                 
                 ListExpr argList = (ListExpr)arg;
                 
-                return new BoolExpr(((IntExpr)argList.getList().get(0)).getValue() ==
-                                   ((IntExpr)argList.getList().get(1)).getValue());
+                return new BoolExpr(((NumExpr)argList.getList().get(0)).getValue() ==
+                                   ((NumExpr)argList.getList().get(1)).getValue());
             }
         };
     }
@@ -89,8 +89,8 @@ public class Arithmetic {
                 
                 ListExpr argList = (ListExpr)arg;
                 
-                return new BoolExpr(((IntExpr)argList.getList().get(0)).getValue() !=
-                                   ((IntExpr)argList.getList().get(1)).getValue());
+                return new BoolExpr(((NumExpr)argList.getList().get(0)).getValue() !=
+                                   ((NumExpr)argList.getList().get(1)).getValue());
             }
         };
     }
@@ -104,8 +104,8 @@ public class Arithmetic {
                 
                 ListExpr argList = (ListExpr)arg;
                 
-                return new BoolExpr(((IntExpr)argList.getList().get(0)).getValue() <
-                                   ((IntExpr)argList.getList().get(1)).getValue());
+                return new BoolExpr(((NumExpr)argList.getList().get(0)).getValue() <
+                                   ((NumExpr)argList.getList().get(1)).getValue());
             }
         };
     }
@@ -119,8 +119,8 @@ public class Arithmetic {
                 
                 ListExpr argList = (ListExpr)arg;
                 
-                return new BoolExpr(((IntExpr)argList.getList().get(0)).getValue() >
-                                   ((IntExpr)argList.getList().get(1)).getValue());
+                return new BoolExpr(((NumExpr)argList.getList().get(0)).getValue() >
+                                   ((NumExpr)argList.getList().get(1)).getValue());
             }
         };
     }
@@ -134,8 +134,8 @@ public class Arithmetic {
                 
                 ListExpr argList = (ListExpr)arg;
                 
-                return new BoolExpr(((IntExpr)argList.getList().get(0)).getValue() <=
-                                   ((IntExpr)argList.getList().get(1)).getValue());
+                return new BoolExpr(((NumExpr)argList.getList().get(0)).getValue() <=
+                                   ((NumExpr)argList.getList().get(1)).getValue());
             }
         };
     }
@@ -149,8 +149,8 @@ public class Arithmetic {
                 
                 ListExpr argList = (ListExpr)arg;
                 
-                return new BoolExpr(((IntExpr)argList.getList().get(0)).getValue() >=
-                                   ((IntExpr)argList.getList().get(1)).getValue());
+                return new BoolExpr(((NumExpr)argList.getList().get(0)).getValue() >=
+                                   ((NumExpr)argList.getList().get(1)).getValue());
             }
         };
     }
@@ -161,8 +161,8 @@ public class Arithmetic {
         
         if (argList.getList().size() != 2) return interpreter.error("'" + op + "' requires two arguments.");
         
-        if (!(argList.getList().get(0) instanceof IntExpr)) return interpreter.error("'" + op + "' expects numeric arguments.");
-        if (!(argList.getList().get(1) instanceof IntExpr)) return interpreter.error("'" + op + "' expects numeric arguments.");
+        if (!(argList.getList().get(0) instanceof NumExpr)) return interpreter.error("'" + op + "' expects numeric arguments.");
+        if (!(argList.getList().get(1) instanceof NumExpr)) return interpreter.error("'" + op + "' expects numeric arguments.");
         
         return null;
     }

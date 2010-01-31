@@ -5,25 +5,25 @@ public final class Token {
     public Token(final TokenType type) {
         mType = type;
         mStringValue = "";
-        mIntValue = 0;
+        mDoubleValue = 0;
     }
 
     public Token(final TokenType type, final String value) {
         mType = type;
         mStringValue = value;
-        mIntValue = 0;
+        mDoubleValue = 0;
     }
 
-    public Token(final TokenType type, final int value) {
+    public Token(final TokenType type, final double value) {
         mType = type;
         mStringValue = "";
-        mIntValue = value;
+        mDoubleValue = value;
     }
 
     public TokenType getType() { return mType; }
     
     public String getString() { return mStringValue; }
-    public int    getInt()    { return mIntValue; }
+    public double getDouble() { return mDoubleValue; }
     
     public String toString() {
         switch (mType)
@@ -42,7 +42,7 @@ public final class Token {
             case OPERATOR: return "[op] " + mStringValue;
             case KEYWORD: return "[key] " + mStringValue;
 
-            case NUMBER: return Integer.toString(mIntValue);
+            case NUMBER: return Double.toString(mDoubleValue);
             case STRING: return "\"" + mStringValue + "\"";
 
             case EOF: return "[eof]";
@@ -53,5 +53,5 @@ public final class Token {
     
     private final TokenType mType;
     private final String mStringValue;
-    private final int mIntValue;
+    private final double mDoubleValue;
 }

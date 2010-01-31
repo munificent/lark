@@ -138,7 +138,7 @@ public class SpecialForms {
             public Expr call(Interpreter interpreter, Scope scope, Expr argExpr) {
                 Expr arg = interpreter.eval(scope, argExpr);
                 
-                return new BoolExpr(arg instanceof IntExpr);
+                return new BoolExpr(arg instanceof NumExpr);
             }
         };
     }
@@ -183,7 +183,7 @@ public class SpecialForms {
                 if (!(arg instanceof ListExpr)) return interpreter.error("Argument to 'count' must be a list.");
                 
                 ListExpr list = (ListExpr)arg;
-                return new IntExpr(list.getList().size());
+                return new NumExpr(list.getList().size());
             }
         };
     }
