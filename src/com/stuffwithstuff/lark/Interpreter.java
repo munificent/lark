@@ -7,11 +7,11 @@ public class Interpreter {
         this(null);
     }
     
-    public Interpreter(Printable printable) {
-        if (printable != null) {
-            mPrintable = printable;
+    public Interpreter(IntepreterHost host) {
+        if (host != null) {
+            mHost = host;
         } else {
-            mPrintable = new SysOutPrintable();
+            mHost = new SysOutHost();
         }
         
         mGlobal = new Scope(null);
@@ -87,12 +87,12 @@ public class Interpreter {
     }
     
     public Expr error(final String message) {
-        mPrintable.print("! " + message);
+        mHost.error(message);
         return Expr.unit();
     }
     
     public void print(final String message) {
-        mPrintable.print(message);
+        mHost.print(message);
     }
     
     private Expr apply(Scope scope, Expr functionExpr, Expr argExpr) {
@@ -107,12 +107,16 @@ public class Interpreter {
         return ((CallableExpr)function).call(this, scope, argExpr);
     }
     
-    private static class SysOutPrintable implements Printable {
+    private static class SysOutHost implements IntepreterHost {
         public void print(final String text) {
             System.out.println(text);
+        }
+
+        public void error(final String text) {
+            System.out.println("! " + text);
         }
     }
     
     private final Scope mGlobal;
-    private Printable mPrintable;
+    private IntepreterHost mHost;
 }

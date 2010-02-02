@@ -32,7 +32,7 @@ public class LarkScript {
     public String getPath() { return mPath; }
     public String getSource() { return mSource; }
     
-    public Expr run(Printable printable) {
+    public Expr run(IntepreterHost printable) {
         if (mSource.length() > 0) {
             Lexer lexer = new Lexer(mSource);
             LarkParser parser = new LarkParser(lexer);
@@ -55,7 +55,7 @@ public class LarkScript {
     }
     
     public Expr run() {
-        return run((Printable)null);
+        return run((IntepreterHost)null);
     }
 
     private static String readFile(String path) throws IOException {

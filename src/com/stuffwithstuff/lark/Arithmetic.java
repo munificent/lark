@@ -68,6 +68,7 @@ public class Arithmetic {
     public static CallableExpr equals() {
         return new CallableExpr() {
             public Expr call(Interpreter interpreter, Scope scope, Expr argExpr) {
+                //### bob: need to handle strings and bools
                 Expr arg = interpreter.eval(scope, argExpr);
                 Expr error = validateBinaryArg(interpreter, "=", arg);
                 if (error != null) return error;
@@ -83,6 +84,7 @@ public class Arithmetic {
     public static CallableExpr notEquals() {
         return new CallableExpr() {
             public Expr call(Interpreter interpreter, Scope scope, Expr argExpr) {
+                //### bob: need to handle strings and bools
                 Expr arg = interpreter.eval(scope, argExpr);
                 Expr error = validateBinaryArg(interpreter, "!=", arg);
                 if (error != null) return error;

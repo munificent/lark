@@ -33,16 +33,18 @@ public class TestRunner {
             String expectedResult = "";
             
             for (String line : script.getSource().split("\r\n|\r|\n")) {
-                if (line.startsWith(OUTPUT_PREFIX)) {
-                    mExpectedOutput.add(line.substring(OUTPUT_PREFIX.length()));
+                if (line.contains(OUTPUT_PREFIX)) {
+                    int start = line.indexOf(OUTPUT_PREFIX) + OUTPUT_PREFIX.length();
+                    mExpectedOutput.add(line.substring(start));
                 }
-                else if (line.startsWith(RESULT_PREFIX)) {
-                    expectedResult = line.substring(RESULT_PREFIX.length());
+                else if (line.contains(RESULT_PREFIX)) {
+                    int start = line.indexOf(RESULT_PREFIX) + RESULT_PREFIX.length();
+                    expectedResult = line.substring(start);
                 }
             }
             
             // run the script
-            Expr resultExpr = script.run(new ExpectedPrintable());
+            Expr resultExpr = script.run(new TestHost());
             if (resultExpr == null) {
                 System.out.println("- fail: got null expression");
                 mPassed = false;
@@ -61,10 +63,9 @@ public class TestRunner {
         if (mPassed) mPasses++;
     }
     
-    private class ExpectedPrintable implements Printable {
-
+    private class TestHost implements IntepreterHost {
         @Override
-        public void print(String text) {
+        public void print(final String text) {
             if (mExpectedOutput.size() == 0) {
                 System.out.println("- fail: got '" + text + "' output when no more was expected");
                 mPassed = false;
@@ -75,6 +76,12 @@ public class TestRunner {
                     mPassed = false;
                 }
             }
+        }
+        
+        @Override
+        public void error(final String text) {
+            System.out.println("- fail: got unexpected error '" + text + "'");
+            mPassed = false;
         }
     }
     

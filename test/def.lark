@@ -1,21 +1,30 @@
-# output: ()
-# output: 1
-# output: 2
-# output: 3
-# output: 1
+# access an undefined name
+print a; # output: ()
 
-print a;
 
+# redefine
+def: b is: 1;
+print b; # output: 1
+def: b is: 2;
+print b; # output: 2
+
+
+# local scope shadows an outer scope
 def: a is: 1;
-print a;
-
-# create a local scope
+print a; # output: 1
 {
     def: a is: 2;
-    print a;
-    
-    def: a is: 3;
-    print a;
+    print a; # output: 2
 };
+print a; # output: 1
 
-print a;
+
+# define multiple names
+def: c, d is: 3, 4;
+print c; # output: 3
+print d; # output: 4
+
+
+# evaluate value
+def: e is: 1 + 2;
+print e; # output: 3

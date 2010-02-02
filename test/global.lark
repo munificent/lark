@@ -1,15 +1,15 @@
 # output: ()
-# output: 123
-# output: 345
-# output: 345
+# output: 1
+# output: 2
+# output: 2
 
 print a;
 
-global: a is: 123;
+global: a is: 1;
 print a;
 
 {
-    global: a is: 345;
+    global: a is: 2;
     print a;
 };
 
