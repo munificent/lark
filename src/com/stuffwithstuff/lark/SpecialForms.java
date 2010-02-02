@@ -16,15 +16,19 @@ public class SpecialForms {
     public static CallableExpr doForm() {
         return new CallableExpr() {
             public Expr call(Interpreter interpreter, Scope scope, Expr argExpr) {
+                
+                // create a new local scope for the body
+                Scope local = scope.create();
+                
                 // if the arg isn't a list, just eval it normally
-                if (!(argExpr instanceof ListExpr)) return interpreter.eval(scope, argExpr);
+                if (!(argExpr instanceof ListExpr)) return interpreter.eval(local, argExpr);
                 
                 // evaluate each item in the arg list in order, returning the last one
                 ListExpr argList = (ListExpr)argExpr;
                 
                 Expr result = null;
                 for (Expr arg : argList.getList()) {
-                    result = interpreter.eval(scope, arg);
+                    result = interpreter.eval(local, arg);
                 }
                 
                 return result;

@@ -1,0 +1,21 @@
+# output: ()
+# output: 1
+# output: 2
+# output: 3
+# output: 1
+
+print a;
+
+def: a is: 1;
+print a;
+
+# create a local scope
+{
+    def: a is: 2;
+    print a;
+    
+    def: a is: 3;
+    print a;
+};
+
+print a;

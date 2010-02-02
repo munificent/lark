@@ -1,0 +1,16 @@
+# output: ()
+# output: 123
+# output: 345
+# output: 345
+
+print a;
+
+global: a is: 123;
+print a;
+
+{
+    global: a is: 345;
+    print a;
+};
+
+print a;
