@@ -45,6 +45,7 @@ public class NumExpr extends CallableExpr {
     
     static {
         sFormat = NumberFormat.getInstance();
+        sFormat.setGroupingUsed(false);
         sFormat.setMinimumFractionDigits(0);
     }
     

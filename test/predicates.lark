@@ -2,7 +2,7 @@ print true.bool?
 # output: true
 print false.bool?
 # output: true
-print 1.bool?
+print bool? 1
 # output: false
 print "s".bool?
 # output: false
@@ -17,7 +17,7 @@ print true.number?
 # output: false
 print false.number?
 # output: false
-print 1.number?
+print number? 1
 # output: true
 print "s".number?
 # output: false
@@ -32,7 +32,7 @@ print true.list?
 # output: false
 print false.list?
 # output: false
-print 1.list?
+print list? 1
 # output: false
 print "s".list?
 # output: false
@@ -47,7 +47,7 @@ print true.name?
 # output: false
 print false.name?
 # output: false
-print 1.name?
+print name? 1
 # output: false
 print "s".name?
 # output: false
@@ -62,7 +62,7 @@ print true.string?
 # output: false
 print false.string?
 # output: false
-print 1.string?
+print string? 1
 # output: false
 print "s".string?
 # output: true

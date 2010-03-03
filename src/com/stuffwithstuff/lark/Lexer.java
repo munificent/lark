@@ -134,11 +134,21 @@ public class Lexer {
             case IN_NUMBER:
                 if (isDigit(c)) {
                     mIndex++;
+                } else if (c == '.') {
+                    changeToken(LexState.IN_DECIMAL);
                 } else {
-                    return createIntToken(TokenType.NUMBER);
+                    return createNumToken(TokenType.NUMBER);
                 }
                 break;
                 
+            case IN_DECIMAL:
+                if (isDigit(c)) {
+                    mIndex++;
+                } else {
+                    return createNumToken(TokenType.NUMBER);
+                }
+                break;
+
             case IN_MINUS:
                 if (isDigit(c)) {
                     changeToken(LexState.IN_NUMBER);
@@ -204,9 +214,9 @@ public class Lexer {
         return new Token(type, text);
     }
 
-    private Token createIntToken(TokenType type) {
+    private Token createNumToken(TokenType type) {
         String text = mText.substring(mTokenStart, mIndex);
-        int value = Integer.parseInt(text);
+        double value = Double.parseDouble(text);
         mState = LexState.DEFAULT;
         return new Token(type, value);
     }
@@ -231,6 +241,7 @@ public class Lexer {
         IN_OPERATOR,
         IN_KEYWORD,
         IN_NUMBER,
+        IN_DECIMAL,
         IN_MINUS,
         IN_STRING,
         IN_COMMENT
