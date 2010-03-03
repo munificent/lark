@@ -1,0 +1,11 @@
+print ' 1
+# output: 1
+
+print ' hi there
+# output: hi there
+
+print '(4 - 3)
+# output: - (4, 3)
+
+print '(if: foo then: bar)
+# output: if:then: (foo, bar)

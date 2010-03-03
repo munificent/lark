@@ -13,6 +13,15 @@ public class SpecialForms {
         };
     }
 
+    public static CallableExpr eval() {
+        return new CallableExpr() {
+            public Expr call(Interpreter interpreter, Scope scope, Expr argExpr) {
+                Expr arg = interpreter.eval(scope, argExpr);
+                return interpreter.eval(scope, arg);
+            }
+        };
+    }
+
     public static CallableExpr doForm() {
         return new CallableExpr() {
             public Expr call(Interpreter interpreter, Scope scope, Expr argExpr) {
@@ -137,16 +146,6 @@ public class SpecialForms {
         };
     }
     
-    public static CallableExpr intPredicate() {
-        return new CallableExpr() {
-            public Expr call(Interpreter interpreter, Scope scope, Expr argExpr) {
-                Expr arg = interpreter.eval(scope, argExpr);
-                
-                return new BoolExpr(arg instanceof NumExpr);
-            }
-        };
-    }
-    
     public static CallableExpr listPredicate() {
         return new CallableExpr() {
             public Expr call(Interpreter interpreter, Scope scope, Expr argExpr) {
@@ -167,18 +166,26 @@ public class SpecialForms {
         };
     }
     
-    public static CallableExpr unitPredicate() {
+    public static CallableExpr numberPredicate() {
         return new CallableExpr() {
             public Expr call(Interpreter interpreter, Scope scope, Expr argExpr) {
                 Expr arg = interpreter.eval(scope, argExpr);
                 
-                // unit is the empty list
-                return new BoolExpr((arg instanceof ListExpr) &&
-                        (((ListExpr)arg).getList().size() == 0));
+                return new BoolExpr(arg instanceof NumExpr);
             }
         };
     }
     
+    public static CallableExpr stringPredicate() {
+        return new CallableExpr() {
+            public Expr call(Interpreter interpreter, Scope scope, Expr argExpr) {
+                Expr arg = interpreter.eval(scope, argExpr);
+                
+                return new BoolExpr(arg instanceof StringExpr);
+            }
+        };
+    }
+
     public static CallableExpr count() {
         return new CallableExpr() {
             public Expr call(Interpreter interpreter, Scope scope, Expr argExpr) {

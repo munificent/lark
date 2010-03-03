@@ -1,0 +1,14 @@
+print (1 + 2)
+# output: 3
+
+print '(1 + 2)
+# output: + (1, 2)
+
+print eval '(1 + 2)
+# output: 3
+
+print eval ' '(1 + 2)
+# output: + (1, 2)
+
+print eval eval ' '(1 + 2)
+# output: 3

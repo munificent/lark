@@ -2,7 +2,7 @@
 # output: 6
 # output: 1
 # output: 2
-print (1 + 2);
-print (2 * 3);
-print (4 - 3);
+print (1 + 2)
+print (2 * 3)
+print (4 - 3)
 print (8 / 4)

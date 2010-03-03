@@ -1,0 +1,74 @@
+print true.bool?
+# output: true
+print false.bool?
+# output: true
+print 1.bool?
+# output: false
+print "s".bool?
+# output: false
+print ().bool?
+# output: false
+print (1, 2).bool?
+# output: false
+print (' name).bool?
+# output: false
+
+print true.number?
+# output: false
+print false.number?
+# output: false
+print 1.number?
+# output: true
+print "s".number?
+# output: false
+print ().number?
+# output: false
+print (1, 2).number?
+# output: false
+print (' name).number?
+# output: false
+
+print true.list?
+# output: false
+print false.list?
+# output: false
+print 1.list?
+# output: false
+print "s".list?
+# output: false
+print ().list?
+# output: true
+print (1, 2).list?
+# output: true
+print (' name).list?
+# output: false
+
+print true.name?
+# output: false
+print false.name?
+# output: false
+print 1.name?
+# output: false
+print "s".name?
+# output: false
+print ().name?
+# output: false
+print (1, 2).name?
+# output: false
+print (' name).name?
+# output: true
+
+print true.string?
+# output: false
+print false.string?
+# output: false
+print 1.string?
+# output: false
+print "s".string?
+# output: true
+print ().string?
+# output: false
+print (1, 2).string?
+# output: false
+print (' name).string?
+# output: false

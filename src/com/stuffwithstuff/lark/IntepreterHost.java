@@ -1,5 +1,6 @@
 package com.stuffwithstuff.lark;
 
-public interface Printable {
+public interface IntepreterHost {
     void print(final String text);
+    void error(final String text);
 }

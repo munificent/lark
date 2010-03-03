@@ -20,7 +20,7 @@ public class LarkParser extends Parser {
         
         do {
             exprs.add(keyword());
-        } while(match(TokenType.SEMICOLON));
+        } while(match(TokenType.LINE));
         
         // only create a list if we actually had a ;
         if (exprs.size() == 1) return exprs.get(0);
@@ -172,6 +172,10 @@ public class LarkParser extends Parser {
             while (true) {
                 Expr term = primaryOrNull();
                 if (term == null) break;
+                
+                // ignore lines in a [] expression
+                match(TokenType.LINE);
+                
                 exprs.add(term);
             }
             

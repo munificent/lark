@@ -8,9 +8,44 @@ public class Lexer {
         mState = LexState.DEFAULT;
         mIndex = 0;
         mTokenStart = 0;
+        
+        // ignore starting lines
+        mEatLines = true;
     }
 
     public Token readToken() {
+        while (true) {
+            Token token = readRawToken();
+            
+            switch (token.getType()) {
+                // ignore lines after tokens that can't end an expression
+            case LEFT_PAREN:
+            case LEFT_BRACKET:
+            case LEFT_BRACE:
+            case COMMA:
+            case DOT:
+            case OPERATOR:
+            case KEYWORD:
+                mEatLines = true;
+                return token;
+                
+            case LINE:
+                if (!mEatLines) {
+                    // collapse multiple lines
+                    mEatLines = true;
+                    return token;
+                }
+                break;
+            
+            default:
+                // a line after any other token is significant
+                mEatLines = false;
+                return token;
+            }
+        }
+    }
+    
+    private Token readRawToken() {
         while (mIndex <= mText.length()) {
             
             // tack on a '\0' to the end of the string an lex it. that will let
@@ -28,7 +63,7 @@ public class Lexer {
                 case '{': return singleCharToken(TokenType.LEFT_BRACE);
                 case '}': return singleCharToken(TokenType.RIGHT_BRACE);
                 case ',': return singleCharToken(TokenType.COMMA);
-                case ';': return singleCharToken(TokenType.SEMICOLON);
+                case ';': return singleCharToken(TokenType.LINE);
                 case '.': return singleCharToken(TokenType.DOT);
                 
                 case '"': startToken(LexState.IN_STRING); break;
@@ -44,10 +79,12 @@ public class Lexer {
                     startToken(LexState.IN_MINUS);
                     break;
                     
-                // ignore whitespace
-                case ' ':
                 case '\n':
                 case '\r':
+                    return singleCharToken(TokenType.LINE);
+                    
+                // ignore whitespace
+                case ' ':
                 case '\t':
                 case '\0':
                     mIndex++;
@@ -201,4 +238,5 @@ public class Lexer {
     private LexState mState;
     private int mTokenStart;
     private int mIndex;
+    private boolean mEatLines;
 }

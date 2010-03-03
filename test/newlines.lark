@@ -1,0 +1,45 @@
+# newlines separate a list
+print (1
+       2
+       3)
+# output: (1, 2, 3)
+
+# newlines separate a s-expr list
+print [1 2
+       3 4]
+# output: (1, 2, 3, 4)
+
+# multiple newlines are compacted
+print (1
+    
+    
+    
+    
+       2)
+# output: (1, 2)
+
+# newlines are eaten after things that don't end an expression
+print (1 +
+       2)
+# output: 3
+
+print (if: true then:
+       4)
+# output: 4
+
+"hi there".
+print
+# output: hi there
+
+print (
+    1, 2)
+# output: (1, 2)
+
+print [
+    3 4]
+# output: (3, 4)
+
+{
+    print "hey"
+}
+# output: hey

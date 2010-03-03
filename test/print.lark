@@ -1,11 +1,16 @@
+print ()
 # output: ()
+
+print 123
 # output: 123
+
+print "hi there"
 # output: hi there
+
+print ' a-name
 # output: a-name
-# output: (1, hello)
-# result: ()
-print ();
-print 123;
-print "hi there";
-print ' a-name;
+
 print (1, "hello")
+# output: (1, hello)
+
+# result: ()

@@ -1,9 +1,13 @@
+if: true then: print "yes 1"
 # output: yes 1
+
+if: false then: print "no 2"
+
+if: true then: print "yes 3" else: print "no 3"
 # output: yes 3
+
+if: false then: print "no 4" else: print "yes 4"
 # output: yes 4
-# output: yes 5
-if: true then: print "yes 1";
-if: false then: print "no 2";
-if: true then: print "yes 3" else: print "no 3";
-if: false then: print "no 4" else: print "yes 4";
+
 print (if: true then: "yes 5" else: "no 5")
+# output: yes 5

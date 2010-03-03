@@ -18,6 +18,7 @@ public class Interpreter {
         
         // register the special forms
         mGlobal.put("'", SpecialForms.quote());
+        mGlobal.put("eval", SpecialForms.eval());
         mGlobal.put("do", SpecialForms.doForm());
         mGlobal.put("print", SpecialForms.print());
         mGlobal.put("=>", SpecialForms.createFunction());
@@ -28,11 +29,11 @@ public class Interpreter {
         mGlobal.put("if:then:", SpecialForms.ifThen());
         mGlobal.put("if:then:else:", SpecialForms.ifThenElse());
 
-        mGlobal.put("bool?", SpecialForms.boolPredicate());
-        mGlobal.put("int?",  SpecialForms.intPredicate());
-        mGlobal.put("list?", SpecialForms.listPredicate());
-        mGlobal.put("name?", SpecialForms.namePredicate());
-        mGlobal.put("unit?", SpecialForms.unitPredicate());
+        mGlobal.put("bool?",   SpecialForms.boolPredicate());
+        mGlobal.put("list?",   SpecialForms.listPredicate());
+        mGlobal.put("name?",   SpecialForms.namePredicate());
+        mGlobal.put("number?", SpecialForms.numberPredicate());
+        mGlobal.put("string?", SpecialForms.stringPredicate());
 
         mGlobal.put("count", SpecialForms.count());
 
@@ -82,7 +83,16 @@ public class Interpreter {
             
         } else {
             CallExpr call = (CallExpr)expr;
-            return apply(scope, call.getLeft(), call.getRight());
+
+            // evaluate the expression for the function we're calling
+            Expr function = eval(scope, call.getLeft());
+                    
+            // must be callable
+            if (!(function instanceof CallableExpr)) {
+                return error("Called object is not callable.");
+            }
+            
+            return ((CallableExpr)function).call(this, scope, call.getRight());
         }
     }
     
@@ -93,18 +103,6 @@ public class Interpreter {
     
     public void print(final String message) {
         mHost.print(message);
-    }
-    
-    private Expr apply(Scope scope, Expr functionExpr, Expr argExpr) {
-        // evaluate the expression for the function we're calling
-        Expr function = eval(scope, functionExpr);
-                
-        // must be callable
-        if (!(function instanceof CallableExpr)) {
-            return error("Called object is not callable.");
-        }
-        
-        return ((CallableExpr)function).call(this, scope, argExpr);
     }
     
     private static class SysOutHost implements IntepreterHost {

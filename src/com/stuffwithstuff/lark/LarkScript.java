@@ -1,9 +1,7 @@
 package com.stuffwithstuff.lark;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.nio.CharBuffer;
+import java.io.*;
+import java.nio.charset.Charset;
 
 public class LarkScript {
     public static String run(String path) {
@@ -57,18 +55,26 @@ public class LarkScript {
     public Expr run() {
         return run((IntepreterHost)null);
     }
-
+    
     private static String readFile(String path) throws IOException {
-        FileReader reader = new FileReader(path);
-        StringBuilder builder = new StringBuilder();
+        FileInputStream stream = new FileInputStream(path);
         
-        CharBuffer buffer = CharBuffer.allocate(1024);
-        while (reader.read(buffer) != -1) {
-            buffer.rewind();
-            builder.append(buffer);
+        try {
+            InputStreamReader input = new InputStreamReader(stream, Charset.defaultCharset());
+            Reader reader = new BufferedReader(input);
+            
+            StringBuilder builder = new StringBuilder();
+            char[] buffer = new char[8192];
+            int read;
+            
+            while ((read = reader.read(buffer, 0, buffer.length)) > 0) {
+                builder.append(buffer, 0, read);
+            }
+            
+            return builder.toString();
+        } finally {
+            stream.close();
         }
-        
-        return builder.toString();
     }
 
     private final String mPath;

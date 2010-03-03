@@ -1,16 +1,15 @@
+print a
 # output: ()
+
+global: a is: 1
+print a
 # output: 1
-# output: 2
-# output: 2
-
-print a;
-
-global: a is: 1;
-print a;
 
 {
-    global: a is: 2;
-    print a;
-};
+    global: a is: 2
+    print a
+    # output: 2
+}
 
-print a;
+print a
+# output: 2
