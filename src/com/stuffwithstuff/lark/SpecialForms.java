@@ -88,30 +88,6 @@ public class SpecialForms {
         };
     }
     
-    public static CallableExpr ifThen() {
-        return new CallableExpr() {
-            public Expr call(Interpreter interpreter, Scope scope, Expr argExpr) {
-                if (argExpr.getType() != ExprType.LIST) return interpreter.error("'if:then:' expects an argument list.");
-                
-                ListExpr argListExpr = (ListExpr)argExpr;
-                if (argListExpr.getList().size() != 2) return interpreter.error ("'if:then:' expects two arguments.");
-                
-                // evaluate the condition
-                Expr condition = interpreter.eval(scope, argListExpr.getList().get(0));
-                
-                if (condition.getType() != ExprType.BOOL) return interpreter.error("'if:then:' condition must evaluate to true or false.");
-                
-                // evaluate the then branch 
-                if (((BoolExpr)condition).getValue()) {
-                    return interpreter.eval(scope, argListExpr.getList().get(1));
-                } else {
-                    // condition was false
-                    return Expr.unit();
-                }
-            }
-        };
-    }
-    
     public static CallableExpr ifThenElse() {
         return new CallableExpr() {
             public Expr call(Interpreter interpreter, Scope scope, Expr argExpr) {

@@ -30,11 +30,12 @@ public class LarkScript {
     public String getPath() { return mPath; }
     public String getSource() { return mSource; }
     
-    public Expr run(IntepreterHost printable) {
+    /* Runs this script in the given interpreter.
+     */
+    public Expr run(Interpreter interpreter) {
         if (mSource.length() > 0) {
             Lexer lexer = new Lexer(mSource);
             LarkParser parser = new LarkParser(lexer);
-            Interpreter interpreter = new Interpreter(printable);
 
             Expr expr = parser.parse();
             
@@ -42,14 +43,17 @@ public class LarkScript {
                 // the body of a script is implicitly wrapped in a 'do'
                 // so that the result is the last expression in the script
                 expr = new CallExpr(new NameExpr("do"), expr);
-                
                 return interpreter.eval(expr);
             } else {
                 System.out.println("Error parsing '" + mPath + "'.");
             }
         }
         
-        return null;
+        return null;        
+    }
+    
+    public Expr run(IntepreterHost host) {
+        return run(new Interpreter(host));
     }
     
     public Expr run() {

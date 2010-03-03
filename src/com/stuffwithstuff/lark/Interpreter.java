@@ -26,7 +26,6 @@ public class Interpreter {
         mGlobal.put("def:is:", SpecialForms.defIs());
         mGlobal.put("global:is:", SpecialForms.globalIs());
         
-        mGlobal.put("if:then:", SpecialForms.ifThen());
         mGlobal.put("if:then:else:", SpecialForms.ifThenElse());
 
         mGlobal.put("bool?",   SpecialForms.boolPredicate());

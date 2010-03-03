@@ -1,0 +1,3 @@
+# define if:then: in terms of if:then:else:
+global: (if:then:) is: [condition then] =>>
+    (if: condition then: eval then else: ())

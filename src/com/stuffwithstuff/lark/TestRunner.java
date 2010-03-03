@@ -24,7 +24,7 @@ public class TestRunner {
         mOutput = 0;
         System.out.println(path.toString());
         
-        try {
+        try {            
             LarkScript script = new LarkScript(path.getPath());
             
             mPassed = true;
@@ -44,8 +44,17 @@ public class TestRunner {
                 }
             }
             
+            Interpreter interpreter = new Interpreter(new TestHost());
+            
+            // load the base script
+            //### bob: hack. assumes relative path.
+            LarkScript base = new LarkScript("base/init.lark");
+            base.run(interpreter);
+
             // run the script
-            Expr resultExpr = script.run(new TestHost());
+            mRunning = true;
+            Expr resultExpr = script.run(interpreter);
+            mRunning = false;
             
             // check the result
             if (resultExpr == null) {
@@ -76,22 +85,28 @@ public class TestRunner {
     private class TestHost implements IntepreterHost {
         @Override
         public void print(final String text) {
-            if (mExpectedOutput.size() == 0) {
-                System.out.println("- fail: got '" + text + "' output when no more was expected");
-                mPassed = false;
-            } else { 
-                String actual = mExpectedOutput.poll();
-                if (!actual.equals(text)) {
-                    System.out.println("- fail: got '" + text + "' output when '" + actual + "' was expected");
+            if (mRunning) {
+                if (mExpectedOutput.size() == 0) {
+                    System.out.println("- fail: got '" + text + "' output when no more was expected");
                     mPassed = false;
-                } else {
-                    mOutput++;
+                } else { 
+                    String actual = mExpectedOutput.poll();
+                    if (!actual.equals(text)) {
+                        System.out.println("- fail: got '" + text + "' output when '" + actual + "' was expected");
+                        mPassed = false;
+                    } else {
+                        mOutput++;
+                    }
                 }
+            } else {
+                System.out.println(text);
             }
         }
         
         @Override
         public void error(final String text) {
+            if (!mRunning) return;
+            
             System.out.println("- fail: got unexpected error '" + text + "'");
             mPassed = false;
         }
@@ -101,6 +116,7 @@ public class TestRunner {
     private static final String RESULT_PREFIX = "# result: ";
     
     private LinkedList<String> mExpectedOutput;
+    private boolean mRunning;
     private boolean mPassed;
     private int mTests;
     private int mPasses;

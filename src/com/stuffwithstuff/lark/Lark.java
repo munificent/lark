@@ -32,6 +32,11 @@ public class Lark {
 
         Interpreter interpreter = new Interpreter();
         
+        // load the base scripts
+        //### bob: hack. assumes relative path.
+        LarkScript base = new LarkScript("base/init.lark");
+        base.run(interpreter);
+        
         while (true) {
             System.out.print("> ");
             String line = in.readLine();
