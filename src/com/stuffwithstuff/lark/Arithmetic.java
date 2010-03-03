@@ -158,13 +158,13 @@ public class Arithmetic {
     }
    
     private static Expr validateBinaryArg(Interpreter interpreter, String op, Expr arg) {
-        if (!(arg instanceof ListExpr)) return interpreter.error("'" + op + "' requires two arguments.");
+        if (arg.getType() != ExprType.LIST) return interpreter.error("'" + op + "' requires two arguments.");
         ListExpr argList = (ListExpr)arg;
         
         if (argList.getList().size() != 2) return interpreter.error("'" + op + "' requires two arguments.");
         
-        if (!(argList.getList().get(0) instanceof NumExpr)) return interpreter.error("'" + op + "' expects numeric arguments.");
-        if (!(argList.getList().get(1) instanceof NumExpr)) return interpreter.error("'" + op + "' expects numeric arguments.");
+        if (argList.getList().get(0).getType() != ExprType.NUMBER) return interpreter.error("'" + op + "' expects numeric arguments.");
+        if (argList.getList().get(1).getType() != ExprType.NUMBER) return interpreter.error("'" + op + "' expects numeric arguments.");
         
         return null;
     }

@@ -7,6 +7,9 @@ public class NameExpr extends Expr {
     }
     
     public String getName() { return mName; }
+    
+    @Override
+    public ExprType getType() { return ExprType.NAME; }
 
     @Override
     public String toString() { return mName; }

@@ -9,7 +9,5 @@ public abstract class Expr {
         return new ListExpr(new ArrayList<Expr>());
     }
     
-    public boolean isLiteral() {
-        return false;
-    }
+    public abstract ExprType getType();
 }

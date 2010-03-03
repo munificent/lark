@@ -11,6 +11,9 @@ public class CallExpr extends Expr {
     public Expr getRight() { return mRight; }
     
     @Override
+    public ExprType getType() { return ExprType.CALL; }
+
+    @Override
     public String toString() {
         return mLeft.toString() + " " + mRight.toString();
     }

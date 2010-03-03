@@ -8,10 +8,8 @@ public class StringExpr extends Expr {
     public String getValue() { return mValue; }
     
     @Override
-    public boolean isLiteral() {
-        return true;
-    }
-    
+    public ExprType getType() { return ExprType.STRING; }
+
     @Override
     public String toString() { return mValue; }
  

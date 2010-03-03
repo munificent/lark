@@ -26,14 +26,14 @@ def: e is: 3 + 4
 print e # output: 7
 
 # define function
-def: f g is: g + g
-print f 3 # output: 6
+#def: f g is: g + g
+#print f 3 # --output: 6
 
 #define multi-arg function
-def: f (g, h) is: g + h
-print f (2, 3) # output: 5
+#def: f (g, h) is: g + h
+#print f (2, 3) # --output: 5
 
 #define multiple functions
-def: f g, h (i, j) is: (g + 7, i + j)
-print f 2 # output: 9
-print h (3, 4) # output: 7
+#def: f g, h (i, j) is: (g + 7, i + j)
+#print f 2 # --output: 9
+#print h (3, 4) # --output: 7

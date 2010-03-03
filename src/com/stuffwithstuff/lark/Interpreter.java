@@ -59,29 +59,8 @@ public class Interpreter {
     }
     
     public Expr eval(Scope scope, Expr expr) {
-        //### bob: instanceof here is lame...
-        if (expr.isLiteral()) {
-            // literals, by definition, evaluate to themselves
-            return expr;
-            
-        } else if (expr instanceof NameExpr) {
-
-            // look up a name in the scope
-            return scope.get(((NameExpr)expr).getName());
-            
-        } else if (expr instanceof ListExpr) {
-            
-            ListExpr list = (ListExpr)expr;
-            
-            // evaluate each of the items
-            List<Expr> results = new ArrayList<Expr>();
-            for (Expr listExpr : list.getList()) {
-                results.add(eval(scope, listExpr));
-            }
-            
-            return new ListExpr(results);
-            
-        } else {
+        switch (expr.getType()) {
+        case CALL:
             CallExpr call = (CallExpr)expr;
 
             // evaluate the expression for the function we're calling
@@ -93,6 +72,26 @@ public class Interpreter {
             }
             
             return ((CallableExpr)function).call(this, scope, call.getRight());
+            
+        case LIST:
+            ListExpr list = (ListExpr)expr;
+            
+            // evaluate each of the items
+            List<Expr> results = new ArrayList<Expr>();
+            for (Expr listExpr : list.getList()) {
+                results.add(eval(scope, listExpr));
+            }
+            
+            return new ListExpr(results);
+            
+        case NAME:
+            // look up a name in the scope
+            return scope.get(((NameExpr)expr).getName());
+            
+        default:
+            // everything else is a literal, which evaluates to itself
+            return expr;
+                
         }
     }
     

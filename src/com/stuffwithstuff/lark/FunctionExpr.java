@@ -44,11 +44,6 @@ public class FunctionExpr extends CallableExpr {
         return interpreter.eval(scope, mBody);
     }
     
-    @Override
-    public boolean isLiteral() {
-        return true;
-    }
-
     private final Scope mClosure;
     private final boolean mIsMacro;
     private final List<String> mParameters;

@@ -11,10 +11,7 @@ public class ListExpr extends Expr {
     public List<Expr> getList() { return mList; }
        
     @Override
-    public boolean isLiteral() {
-        // an empty list is () ("unit"), which evaluates to itself
-        return mList.size() == 0;
-    }
+    public ExprType getType() { return ExprType.LIST; }
 
     @Override
     public String toString() {

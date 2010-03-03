@@ -8,9 +8,7 @@ public class BoolExpr extends Expr {
     public boolean getValue() { return mValue; }
     
     @Override
-    public boolean isLiteral() {
-        return true;
-    }
+    public ExprType getType() { return ExprType.BOOL; }
 
     @Override
     public String toString() { return Boolean.toString(mValue); }

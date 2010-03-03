@@ -30,7 +30,7 @@ public class SpecialForms {
                 Scope local = scope.create();
                 
                 // if the arg isn't a list, just eval it normally
-                if (!(argExpr instanceof ListExpr)) return interpreter.eval(local, argExpr);
+                if (argExpr.getType() != ExprType.LIST) return interpreter.eval(local, argExpr);
                 
                 // evaluate each item in the arg list in order, returning the last one
                 ListExpr argList = (ListExpr)argExpr;
@@ -91,7 +91,7 @@ public class SpecialForms {
     public static CallableExpr ifThen() {
         return new CallableExpr() {
             public Expr call(Interpreter interpreter, Scope scope, Expr argExpr) {
-                if (!(argExpr instanceof ListExpr)) return interpreter.error("'if:then:' expects an argument list.");
+                if (argExpr.getType() != ExprType.LIST) return interpreter.error("'if:then:' expects an argument list.");
                 
                 ListExpr argListExpr = (ListExpr)argExpr;
                 if (argListExpr.getList().size() != 2) return interpreter.error ("'if:then:' expects two arguments.");
@@ -99,7 +99,7 @@ public class SpecialForms {
                 // evaluate the condition
                 Expr condition = interpreter.eval(scope, argListExpr.getList().get(0));
                 
-                if (!(condition instanceof BoolExpr)) return interpreter.error("'if:then:' condition must evaluate to true or false.");
+                if (condition.getType() != ExprType.BOOL) return interpreter.error("'if:then:' condition must evaluate to true or false.");
                 
                 // evaluate the then branch 
                 if (((BoolExpr)condition).getValue()) {
@@ -115,7 +115,7 @@ public class SpecialForms {
     public static CallableExpr ifThenElse() {
         return new CallableExpr() {
             public Expr call(Interpreter interpreter, Scope scope, Expr argExpr) {
-                if (!(argExpr instanceof ListExpr)) return interpreter.error("'if:then:else:' expects an argument list.");
+                if (argExpr.getType() != ExprType.LIST) return interpreter.error("'if:then:else:' expects an argument list.");
                 
                 ListExpr argListExpr = (ListExpr)argExpr;
                 if (argListExpr.getList().size() != 3) return interpreter.error ("'if:then:else:' expects three arguments.");
@@ -123,7 +123,7 @@ public class SpecialForms {
                 // evaluate the condition
                 Expr condition = interpreter.eval(scope, argListExpr.getList().get(0));
                 
-                if (!(condition instanceof BoolExpr)) return interpreter.error("'if:then:else:' condition must evaluate to true or false.");
+                if (condition.getType() != ExprType.BOOL) return interpreter.error("'if:then:else:' condition must evaluate to true or false.");
                 
                 // evaluate the then branch 
                 if (((BoolExpr)condition).getValue()) {
@@ -141,7 +141,7 @@ public class SpecialForms {
             public Expr call(Interpreter interpreter, Scope scope, Expr argExpr) {
                 Expr arg = interpreter.eval(scope, argExpr);
                 
-                return new BoolExpr(arg instanceof BoolExpr);
+                return new BoolExpr(arg.getType() == ExprType.BOOL);
             }
         };
     }
@@ -151,7 +151,7 @@ public class SpecialForms {
             public Expr call(Interpreter interpreter, Scope scope, Expr argExpr) {
                 Expr arg = interpreter.eval(scope, argExpr);
                 
-                return new BoolExpr(arg instanceof ListExpr);
+                return new BoolExpr(arg.getType() == ExprType.LIST);
             }
         };
     }
@@ -161,7 +161,7 @@ public class SpecialForms {
             public Expr call(Interpreter interpreter, Scope scope, Expr argExpr) {
                 Expr arg = interpreter.eval(scope, argExpr);
                 
-                return new BoolExpr(arg instanceof NameExpr);
+                return new BoolExpr(arg.getType() == ExprType.NAME);
             }
         };
     }
@@ -171,7 +171,7 @@ public class SpecialForms {
             public Expr call(Interpreter interpreter, Scope scope, Expr argExpr) {
                 Expr arg = interpreter.eval(scope, argExpr);
                 
-                return new BoolExpr(arg instanceof NumExpr);
+                return new BoolExpr(arg.getType() == ExprType.NUMBER);
             }
         };
     }
@@ -181,7 +181,7 @@ public class SpecialForms {
             public Expr call(Interpreter interpreter, Scope scope, Expr argExpr) {
                 Expr arg = interpreter.eval(scope, argExpr);
                 
-                return new BoolExpr(arg instanceof StringExpr);
+                return new BoolExpr(arg.getType() == ExprType.STRING);
             }
         };
     }
@@ -191,7 +191,7 @@ public class SpecialForms {
             public Expr call(Interpreter interpreter, Scope scope, Expr argExpr) {
                 Expr arg = interpreter.eval(scope, argExpr);
                 
-                if (!(arg instanceof ListExpr)) return interpreter.error("Argument to 'count' must be a list.");
+                if (arg.getType() != ExprType.LIST) return interpreter.error("Argument to 'count' must be a list.");
                 
                 ListExpr list = (ListExpr)arg;
                 return new NumExpr(list.getList().size());
@@ -209,15 +209,15 @@ public class SpecialForms {
         // get the list of names being defined
         Expr nameArg = args.getList().get(0);
         List<String> names = new ArrayList<String>();
-        if (nameArg instanceof NameExpr) {
+        if (nameArg.getType() == ExprType.NAME) {
             // defining a single name
             names.add(((NameExpr)nameArg).getName());
             
-        } else if (nameArg instanceof ListExpr) {
+        } else if (nameArg.getType() == ExprType.LIST) {
             // defining a list of names
             ListExpr namesList = (ListExpr)nameArg;
             for (Expr name : namesList.getList()) {
-                if (!(name instanceof NameExpr)) {
+                if (name.getType() != ExprType.NAME) {
                     return interpreter.error("First argument to def:is: must be a name, list, or call.");
                 }
                 names.add(((NameExpr)name).getName());
@@ -232,7 +232,7 @@ public class SpecialForms {
         
         // make sure the body matches the names
         if (names.size() > 1) {
-            if (!(value instanceof ListExpr)) return interpreter.error("When defining multiple names, the value must be a list.");
+            if (value.getType() != ExprType.LIST) return interpreter.error("When defining multiple names, the value must be a list.");
             ListExpr valueList = (ListExpr)value;
             if (names.size() != valueList.getList().size()) return interpreter.error("When defining multiple names, the number of names and values must match.");
         }
@@ -265,7 +265,7 @@ public class SpecialForms {
         // get the parameter name(s)
         List<String> paramNames = new ArrayList<String>();
         Expr parameters = argList.getList().get(0);
-        if (parameters instanceof ListExpr) {
+        if (parameters.getType() == ExprType.LIST) {
             ListExpr paramList = (ListExpr)parameters;
             
             for (Expr param : paramList.getList()) {

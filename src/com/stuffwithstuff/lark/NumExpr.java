@@ -10,11 +10,6 @@ public class NumExpr extends CallableExpr {
     public double getValue() { return mValue; }
     
     @Override
-    public boolean isLiteral() {
-        return true;
-    }
-    
-    @Override
     public Expr call(Interpreter interpreter, Scope scope, Expr argExpr) {
         // an int is a "function" that takes a list and returns the element
         // at that (zero-based) index in the list
@@ -37,6 +32,9 @@ public class NumExpr extends CallableExpr {
         
         //### bob: should also work for getting a character from a string?
     }
+    
+    @Override
+    public ExprType getType() { return ExprType.NUMBER; }
     
     @Override
     public String toString() {
