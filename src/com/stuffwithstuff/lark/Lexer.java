@@ -169,7 +169,9 @@ public class Lexer {
                 
             case IN_COMMENT:
                 if ((c == '\n') || (c == '\r')) {
-                    mIndex++;
+                    // don't eat the newline here. that way, a comment on the
+                    // same line as other code still allows the newline to be
+                    // processed
                     mState = LexState.DEFAULT;
                 } else {
                     mIndex++;

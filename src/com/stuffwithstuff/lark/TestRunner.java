@@ -21,6 +21,7 @@ public class TestRunner {
     }
     
     private void runTest(File path) {
+        mOutput = 0;
         System.out.println(path.toString());
         
         try {
@@ -45,6 +46,8 @@ public class TestRunner {
             
             // run the script
             Expr resultExpr = script.run(new TestHost());
+            
+            // check the result
             if (resultExpr == null) {
                 System.out.println("- fail: got null expression");
                 mPassed = false;
@@ -53,11 +56,18 @@ public class TestRunner {
                 System.out.println("- fail: result was '" + resultExpr.toString() + "', expected '" + expectedResult + "'");
                 mPassed = false;
             }
+            
+            // see if we missed output
+            for (String expected : mExpectedOutput) {
+                System.out.println("- fail: expected '" + expected + "' but got nothing");
+            }
         }
         catch (IOException ex) {
             System.out.println("- fail: got exception loading test script");
             mPassed = false;
         }
+        
+        System.out.println("- passed " + mOutput + " lines of output");
         
         mTests++;
         if (mPassed) mPasses++;
@@ -74,6 +84,8 @@ public class TestRunner {
                 if (!actual.equals(text)) {
                     System.out.println("- fail: got '" + text + "' output when '" + actual + "' was expected");
                     mPassed = false;
+                } else {
+                    mOutput++;
                 }
             }
         }
@@ -92,4 +104,5 @@ public class TestRunner {
     private boolean mPassed;
     private int mTests;
     private int mPasses;
+    private int mOutput;
 }

@@ -210,19 +210,20 @@ public class SpecialForms {
         Expr nameArg = args.getList().get(0);
         List<String> names = new ArrayList<String>();
         if (nameArg instanceof NameExpr) {
+            // defining a single name
             names.add(((NameExpr)nameArg).getName());
             
         } else if (nameArg instanceof ListExpr) {
+            // defining a list of names
             ListExpr namesList = (ListExpr)nameArg;
             for (Expr name : namesList.getList()) {
                 if (!(name instanceof NameExpr)) {
-                    return interpreter.error("First argument to def:is: must be a name or a list of names.");
+                    return interpreter.error("First argument to def:is: must be a name, list, or call.");
                 }
                 names.add(((NameExpr)name).getName());
             }
-            
         } else {
-            return interpreter.error("First argument to def:is: must be a name or a list of names.");
+            return interpreter.error("First argument to def:is: must be a name, list, or call.");
         }
         
         // evaluate the value(s)
