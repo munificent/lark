@@ -35,19 +35,19 @@ public final class Token {
             case LEFT_BRACE: return "{";
             case RIGHT_BRACE: return "}";
             case COMMA: return ",";
-            case LINE: return ";";
+            case LINE: return "(line)";
             case DOT: return ".";
 
-            case NAME: return "[name] " + mStringValue;
-            case OPERATOR: return "[op] " + mStringValue;
-            case KEYWORD: return "[key] " + mStringValue;
+            case NAME: return mStringValue + " (name)";
+            case OPERATOR: return mStringValue + " (op)";
+            case KEYWORD: return mStringValue + " (keyword)";
 
             case NUMBER: return Double.toString(mDoubleValue);
             case STRING: return "\"" + mStringValue + "\"";
 
-            case EOF: return "[eof]";
+            case EOF: return "(eof)";
 
-            default: return "[unknown token?!]";
+            default: return "(unknown token?!)";
         }
     }
     

@@ -1,3 +1,5 @@
 # define if:then: in terms of if:then:else:
 global: (if:then:) is: [condition then] =>>
     (if: condition then: eval then else: ())
+
+global: (!=) is: [left right] => (if: left = right then: false else: true)

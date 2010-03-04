@@ -37,15 +37,16 @@ public class LarkScript {
             Lexer lexer = new Lexer(mSource);
             LarkParser parser = new LarkParser(lexer);
 
-            Expr expr = parser.parse();
+            try {
+                Expr expr = parser.parse();
             
-            if (expr != null) {
                 // the body of a script is implicitly wrapped in a 'do'
                 // so that the result is the last expression in the script
                 expr = new CallExpr(new NameExpr("do"), expr);
                 return interpreter.eval(expr);
-            } else {
-                System.out.println("Error parsing '" + mPath + "'.");
+                
+            } catch (ParseException ex) {
+                System.out.println("Error parsing '" + mPath + "': " + ex.getMessage());
             }
         }
         

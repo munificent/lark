@@ -44,15 +44,14 @@ public class Lark {
             
             Lexer lexer = new Lexer(line);
             LarkParser parser = new LarkParser(lexer);
-            Expr expr = parser.parse();
             
-            if (expr != null) {
-                //System.out.println(": " + expr);
-                
+            try {
+                Expr expr = parser.parse();
                 Expr result = interpreter.eval(expr);
+                
                 System.out.println("= " + result.toString());
-            } else {
-                System.out.println("! parse error");
+            } catch(ParseException ex) {
+                System.out.println("Could not parse expression: " + ex.getMessage());
             }
         }
     }

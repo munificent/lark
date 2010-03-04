@@ -42,7 +42,6 @@ public class Interpreter {
         mGlobal.put("/", Arithmetic.divide());
 
         mGlobal.put("=", Arithmetic.equals());
-        mGlobal.put("!=", Arithmetic.notEquals());
         mGlobal.put("<", Arithmetic.lessThan());
         mGlobal.put(">", Arithmetic.greaterThan());
         mGlobal.put("<=", Arithmetic.lessThanOrEqual());
@@ -64,7 +63,7 @@ public class Interpreter {
 
             // evaluate the expression for the function we're calling
             Expr function = eval(scope, call.getLeft());
-                    
+            
             // must be callable
             if (!(function instanceof CallableExpr)) {
                 return error("Called object is not callable.");
@@ -90,7 +89,6 @@ public class Interpreter {
         default:
             // everything else is a literal, which evaluates to itself
             return expr;
-                
         }
     }
     
@@ -114,5 +112,6 @@ public class Interpreter {
     }
     
     private final Scope mGlobal;
+    
     private IntepreterHost mHost;
 }

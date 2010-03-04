@@ -11,14 +11,20 @@ public class LarkParser extends Parser {
         super(lexer);
     }
     
-    public Expr parse() {
+    public Expr parse() throws ParseException {
         return semicolonList();
     }
     
-    private Expr semicolonList() {
+    private Expr semicolonList() throws ParseException {
         List<Expr> exprs = new ArrayList<Expr>();
         
         do {
+            // ignore trailing lines before closing a group
+            if (isMatch(TokenType.RIGHT_PAREN)) break;
+            if (isMatch(TokenType.RIGHT_BRACE)) break;
+            if (isMatch(TokenType.RIGHT_BRACKET)) break;
+            if (isMatch(TokenType.EOF)) break;
+            
             exprs.add(keyword());
         } while(match(TokenType.LINE));
         
@@ -28,7 +34,7 @@ public class LarkParser extends Parser {
         return new ListExpr(exprs);        
     }
     
-    private Expr keyword() {
+    private Expr keyword() throws ParseException {
         if (!isMatch(TokenType.KEYWORD)) return commaList();
 
         List<String> keywords = new ArrayList<String>();
@@ -42,7 +48,7 @@ public class LarkParser extends Parser {
         return new CallExpr(new NameExpr(join(keywords)), new ListExpr(args));
     }
 
-    private Expr commaList() {
+    private Expr commaList() throws ParseException {
         List<Expr> exprs = new ArrayList<Expr>();
         
         do {
@@ -55,7 +61,7 @@ public class LarkParser extends Parser {
         return new ListExpr(exprs);
     }
 
-    private Expr operator() {
+    private Expr operator() throws ParseException {
         Expr expr = call();
 
         while (match(TokenType.OPERATOR)) {
@@ -72,7 +78,7 @@ public class LarkParser extends Parser {
         return expr;        
     }
     
-    private Expr call() {
+    private Expr call() throws ParseException {
         Stack<Expr> stack = new Stack<Expr>();
         
         // push as many calls as we can parse
@@ -82,8 +88,9 @@ public class LarkParser extends Parser {
             stack.push(expr);
         }
         
-        //### bob: need error-handling
-        if (stack.size() == 0) return new NameExpr("parse error, expected primary");
+        if (stack.size() == 0) {
+            throw new ParseException("Expected primary expression.");
+        }
         
         // and then pop them back off to be right-associative
         Expr result = stack.pop();
@@ -94,7 +101,7 @@ public class LarkParser extends Parser {
         return result;
     }
 
-    private Expr dottedOrNull() {
+    private Expr dottedOrNull() throws ParseException {
         Expr expr = primaryOrNull();
         
         if (expr == null) return null;
@@ -102,8 +109,7 @@ public class LarkParser extends Parser {
         while (match(TokenType.DOT)) {
             Expr right = primaryOrNull();
 
-            //### bob: need error-handling
-            if (right == null) return new NameExpr("parse error, expected expression after '.'");
+            if (right == null) throw new ParseException("Expected expression after '.'");
             
             // swap the function and argument
             // a.b -> b(a)
@@ -113,7 +119,7 @@ public class LarkParser extends Parser {
         return expr;        
     }
     
-    private Expr primaryOrNull() {
+    private Expr primaryOrNull() throws ParseException {
         if (match(TokenType.NAME)) {
             String name = getMatch()[0].getString();
             
@@ -147,22 +153,14 @@ public class LarkParser extends Parser {
             
             Expr expr = semicolonList();
             
-            if (!match(TokenType.RIGHT_PAREN)) {
-                // no closing )
-                //### bob: need error-handling!
-                return new NameExpr("missing closing )!");
-            }
+            if (!match(TokenType.RIGHT_PAREN)) throw new ParseException("Missing closing ')'.");
             
             return expr;
         } else if (match(TokenType.LEFT_BRACE)) {
             // { a } -> do a
             Expr expr = semicolonList();
             
-            if (!match(TokenType.RIGHT_BRACE)) {
-                // no closing )
-                //### bob: need error-handling!
-                return new NameExpr("missing closing )!");
-            }
+            if (!match(TokenType.RIGHT_BRACE)) throw new ParseException("Missing closing '}'.");
             
             return new CallExpr(new NameExpr("do"), expr);
         } else if (match(TokenType.LEFT_BRACKET)) {
@@ -179,11 +177,7 @@ public class LarkParser extends Parser {
                 exprs.add(term);
             }
             
-            if (!match(TokenType.RIGHT_BRACKET)) {
-                // no closing ]
-                //### bob: need error-handling!
-                return new NameExpr("missing closing ]!");
-            }
+            if (!match(TokenType.RIGHT_BRACKET)) throw new ParseException("Missing closing ']'.");
             
             return new ListExpr(exprs);
         }
