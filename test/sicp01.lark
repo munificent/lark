@@ -40,3 +40,69 @@ print ((3 * 5) + (10 - 6))
 # (+ (* 3 (+ (* 2 4) (+ 3 5))) (+ (- 10 7) 6))
 print ((3 * (2 * 4 + 3 + 5)) + (10 - 7 + 6))
 # output: 57
+
+# 1.1.2
+# -----
+
+# (define size 2)
+global: size is: 2
+
+# size
+print size
+# output: 2
+
+# (* 5 size)
+print (5 * size)
+# output: 10
+
+# (define pi 3.14159)
+global: pi is: 3.14159
+
+# (define radius 10)
+global: radius is: 10
+
+# (* pi (* radius radius))
+print (pi * radius * radius)
+# output: 314.159
+
+# (define circumference (* 2 pi radius))
+global: circumference is: 2 * pi * radius
+# circumference
+print circumference
+# output: 62.832
+
+# 1.1.4
+# -----
+
+# (define (square x) (* x x))
+global: square is: x => (x * x)
+
+# (square 21)
+print square 21
+# output: 441
+
+# (square (+ 2 5))
+print square (2 + 5)
+# output: 49
+
+# (square (square 3))
+print square square 3
+# output: 81
+
+# (define (sum-of-squares x y)
+#   (+ (square x) (square y)))
+global: sumOfSquares is: [x y] => (square x + square y)
+
+# (sum-of-squares 3 4)
+print sumOfSquares (3, 4)
+# output: 25
+
+# (define (f a)
+#   (sum-of-squares (+ a 1) (* a 2)))
+global: f is: a => sumOfSquares (a + 1, a * 2)
+
+# (f 5)
+print f 5
+# output: 136
+
+# exercise 1.1:
