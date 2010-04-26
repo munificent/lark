@@ -1,0 +1,116 @@
+# exercise 1.1:
+# ------------
+
+# 10
+print 10
+# output: 10
+
+# (+ 5 3 4)
+print (5 + 3 + 4)
+# output: 12
+
+# (- 9 1)
+print (9 - 1)
+# output: 8
+
+# (/ 6 2)
+print (6 / 2)
+# output: 3
+
+# (+ (* 2 4) (- 4 6))
+print ((2 * 4) + (4 - 6))
+# output: 6
+
+# (define a 3)
+print (global: a is: 3)
+# output: ()
+
+# (define b (+ a 1))
+print (global: b is: a + 1)
+# output: ()
+
+# (+ a b (* a b))
+print (a + b + (a * b))
+# output: 19
+
+# (= a b)
+print (a = b)
+# output: false
+
+# (if (and (> b a) (< b (* a b)))
+#     b
+#     a)
+print (if: (b > a) & (b < (a * b)) then: b else: a)
+# output: 4
+
+# (cond ((= a 4) 6)
+#       ((= b 4) (+ 6 7 a))
+#       (else 25))
+print (if: a = 4 then: 6 else:
+      (if: b = 4 then: 6 + 7 + a else: 25))
+# output: 16
+
+# (+ 2 (if (> b a) b a))
+print (2 + (if: b > a then: b else: a))
+# output: 6
+
+# (* (cond ((> a b) a)
+#          ((< a b) b)
+#          (else -1))
+#    (+ a 1))
+print ((if: a > b then: a else:
+            (if: a < b then: b else: -1)) * (a + 1))
+# output: 16
+
+
+# exercise 1.2:
+# ------------
+print ((5 + 4 + (2 - (3 - (6 + (1 / 3))))) / (3 * (6 - 2) * (2 - 7)))
+# output: -0.239
+
+
+# exercise 1.3:
+# ------------
+def: square is: [x] => (x * x)
+def: twoLargest is: [x y z] => (
+    if: x < y then: (
+        if: x < z then: [y z] else: [x y]
+    ) else: (
+        if: y < z then: [x z] else: [x y]
+    )
+)
+def: sumOfLargestSquares is: [x y z] => {
+    def: a is: twoLargest [x y z]
+    square a.0 + square a.1
+}
+
+print sumOfLargestSquares [1 2 3]
+# output: 13
+print sumOfLargestSquares [3 1 2]
+# output: 13
+print sumOfLargestSquares [2 2 2]
+# output: 8
+
+
+# exercise 1.4:
+# ------------
+# (define (a-plus-abs-b a b)
+#  ((if (> b 0) + -) a b))
+def: aPlusAbsB is: [a b] => ((if: (b > 0) then: (+) else: (-)) (a, b))
+print aPlusAbsB (2, 3)
+# output: 5
+print aPlusAbsB (2, -3)
+# output: 5
+
+
+# exercise 1.5:
+# ------------
+# (define (p) (p))
+# (define (test x y)
+#   (if (= x 0)
+#       0
+#       y))
+# (test 0 (p))
+
+# applicative order will stack overflow trying to recursively evaluate (p).
+# normal order will safely return 0.

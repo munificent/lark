@@ -3,10 +3,6 @@ package com.stuffwithstuff.lark;
 import java.util.*;
 
 public class LarkParser extends Parser {
-    
-    //### bob: other stuff to support
-    // decimals
-    
     public LarkParser(Lexer lexer) {
         super(lexer);
     }

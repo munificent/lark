@@ -105,4 +105,18 @@ global: f is: a => sumOfSquares (a + 1, a * 2)
 print f 5
 # output: 136
 
-# exercise 1.1:
+# 1.1.6
+# -----
+
+# (define (abs x)
+#   (cond ((> x 0) x)
+#         ((= x 0) 0)
+#         ((< x 0) (- x))))
+global: abs is: x => (
+    if: x > 0 then: x else: neg x)
+print abs 123
+# output: 123
+print abs -123
+# output: 123
+print abs 0
+# output: 0

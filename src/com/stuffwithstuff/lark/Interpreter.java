@@ -84,7 +84,13 @@ public class Interpreter {
             
         case NAME:
             // look up a name in the scope
-            return scope.get(((NameExpr)expr).getName());
+            String name = ((NameExpr)expr).getName();
+            Expr value = scope.get(name);
+            if (value == null) {
+                warning("Could not find a value named '" + name + "'.");
+                value = Expr.unit();
+            }
+            return value;
             
         default:
             // everything else is a literal, which evaluates to itself
@@ -97,6 +103,10 @@ public class Interpreter {
         return Expr.unit();
     }
     
+    public void warning(final String message) {
+        mHost.warning(message);
+    }
+
     public void print(final String message) {
         mHost.print(message);
     }
@@ -108,6 +118,10 @@ public class Interpreter {
 
         public void error(final String text) {
             System.out.println("! " + text);
+        }
+
+        public void warning(final String text) {
+            System.out.println("? " + text);
         }
     }
     

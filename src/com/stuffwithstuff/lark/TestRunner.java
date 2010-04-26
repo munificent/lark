@@ -110,6 +110,11 @@ public class TestRunner {
             System.out.println("- fail: got unexpected error '" + text + "'");
             mPassed = false;
         }
+        
+        @Override
+        public void warning(final String text) {
+            // ignore warnings
+        }
     }
     
     private static final String OUTPUT_PREFIX = "# output: ";

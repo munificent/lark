@@ -3,3 +3,11 @@ global: (if:then:) is: [condition then] =>>
     (if: condition then: eval then else: ())
 
 global: (!=) is: [left right] => (if: left = right then: false else: true)
+
+global: neg is: n => (0 - n)
+
+global: (|) is: [left right] =>>
+    (if: eval left then: eval false else: right)
+    
+global: (&) is: [left right] =>>
+    (if: eval left then: eval right else: false)
